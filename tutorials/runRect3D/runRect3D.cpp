@@ -250,19 +250,6 @@ public:
                     in_r[4] = in_r[4] / 20.0;
                     in_r[5] = in_r[5] / 20.0;
                     
-                    // // TODO: a temporary fix utilizing linearity of the meta cone.
-                    // Eigen::Vector3d velAbs;
-                    // velAbs << in_r[3], in_r[4];
-                    // velAbs = velAbs.cwiseAbs();
-                    // double scale = 1.0;
-                    // if (velAbs.maxCoeff() < 0.5 && std::abs(in_r[2] * (2.5/velAbs.maxCoeff()))<5.0)
-                    // {
-                    //     in_r[2] = in_r[2] * (2.5/velAbs.maxCoeff());
-                    //     in_r[3] = in_r[3] * (2.5/velAbs.maxCoeff());
-                    //     in_r[4] = in_r[4] * (2.5/velAbs.maxCoeff());
-                    //     scale = 2.5/velAbs.maxCoeff();
-                    // }
-                    
                     vec_t input_r;
                     input_r.assign(in_r.data(), in_r.data()+9);
                     
