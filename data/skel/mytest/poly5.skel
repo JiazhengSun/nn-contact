@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<skel version="1.0">
+    <world name="world 1">
+        <physics>
+            <time_step>0.002</time_step>
+            <gravity>0 -10.0 0</gravity>
+            <collision_detector>ode</collision_detector>
+        </physics>
+        
+        <skeleton name="ground skeleton">
+            <mobile>false</mobile>
+            <body name="ground">
+                <transformation>0 -0.0 0 0 0 0</transformation>
+                <visualization_shape>
+                    <transformation>0 -0.025 0 0 0 0</transformation>
+                    <geometry>
+                        <box>
+                            <size>5.0 0.05 1.0</size>
+                        </box>
+                    </geometry>
+                    <color>0.5 0.5 0.5</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0 0.0 0 0 0 0</transformation>
+                    <geometry>
+                        <plane>
+                            <normal>0.0 1.0 0.0</normal>
+                            <offset>0.0</offset>
+                        </plane>
+<!--                         <box>
+                            <size>5.0 0.05 5.0</size>
+                        </box> -->
+                    </geometry>
+                </collision_shape>                                
+            </body>
+            <joint type="weld" name="joint 1">
+                <parent>world</parent>
+                <child>ground</child>
+            </joint>
+        </skeleton>	
+
+        <skeleton name="hopper">
+            <body name="h_foot">
+                <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>1.0</mass>
+                    <offset>0.0 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation> -0.15 -0.14 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <mesh>
+                          <file_name>poly5.obj</file_name>
+                          <scale>1.0 1.0 1.0</scale>
+                        </mesh>
+                    </geometry>
+                    <color>1.0 0.5 1.0</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation> -0.15 -0.14 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <mesh>
+                          <file_name>poly5.obj</file_name>
+                          <scale>1.0 1.0 1.0</scale>
+                        </mesh>
+                    </geometry>
+                </collision_shape>                                
+            </body>
+            
+            <joint type="free" name="j_foot">
+                <parent>world</parent>
+                <child>h_foot</child>
+                <init_pos>0 0 2 0 0.25 0</init_pos>
+                <init_vel>0 0 0 0 0 0</init_vel>
+            </joint>
+        </skeleton>	
+    </world>
+</skel>
+

@@ -1,0 +1,217 @@
+<?xml version="1.0" ?>
+<skel version="1.0">
+    <world name="world 1">
+        <physics>
+            <time_step>0.002</time_step>
+            <gravity>-0 -10 0</gravity>
+            <!-- <gravity>-5 -5 0</gravity> -->
+            <!-- <gravity>-5 -5 0</gravity> -->
+            <collision_detector>dart</collision_detector>
+        </physics>
+
+        <skeleton name="arm skeleton">
+            <transformation>0 0 0 0 0 0</transformation> 
+            <body name="scapula">
+                <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>2.5</mass>
+                    <offset>0.2 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation>0.2 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.4 0.04 0.2</size>
+                        </box>
+                    </geometry>
+                    <color>1.0 0.5 1.0</color>
+                </visualization_shape>                               
+            </body>
+
+            <body name="bicep">
+                <transformation>0.4 0 0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>2</mass>
+                    <offset>0.2 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation>0.2 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.4 0.04 0.2</size>
+                        </box>
+                    </geometry>
+                    <color>0.5 0.5 0.0</color>
+                </visualization_shape>                              
+            </body>
+
+ <!--            <body name="scapula">
+                <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>1.0</mass>
+                    <offset>0.1 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation>0.1 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                    <color>0.6 0.0 0.0</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0.1 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                </collision_shape>                                
+            </body>
+
+            <body name="bicep">
+                <transformation>0.2 0 0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>1.0</mass>
+                    <offset>0.1 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation>0.1 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                    <color>0.9 0.9 0.0</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0.1 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                </collision_shape>                               
+            </body> -->
+
+            <!-- JOINT:-->
+            <joint type="revolute" name="j_scapula">
+                <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                <parent>world</parent>
+                <child>scapula</child>
+                <axis>
+                    <xyz>0.0 0.0 1.0</xyz>
+                </axis>
+                <init_pos>0.0</init_pos>
+                <init_vel>0</init_vel>
+            </joint>
+
+            <joint type="revolute" name="j_bicep">
+                <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                <parent>scapula</parent>
+                <child>bicep</child>
+                <axis>
+                    <xyz>0.0 0.0 1.0</xyz>
+                </axis>
+                <init_pos>0.0</init_pos>
+                <init_vel>0</init_vel>
+            </joint>
+        </skeleton>	  
+
+        <skeleton name="hand skeleton">
+            <body name="hand">
+                <transformation>0.85 0.05 0.0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>1.0</mass>
+                    <offset>0.0 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                    <color>1.0 0.5 0.5</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                </collision_shape>                               
+            </body>
+            <joint type="free" name="joint 1">
+                <parent>world</parent>
+                <child>hand</child>
+                <init_pos>0 0 1.570796 0 0 0</init_pos>
+                <init_vel>0 0 0 0 0 0</init_vel>
+            </joint>
+        </skeleton> 
+<!-- 
+        <skeleton name="hand skeleton">
+            <body name="hand">
+                <transformation>0.5 0.00 0.0 0.0 0.0 0.0</transformation>
+                <inertia>
+                    <mass>1.0</mass>
+                    <offset>0.0 0.0 0.0</offset>
+                </inertia>
+                <visualization_shape>
+                    <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                    <color>0.0 0.6 0.6</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+                    <geometry>
+                        <box>
+                            <size>0.2 0.1 0.2</size>
+                        </box>
+                    </geometry>
+                </collision_shape>                               
+            </body>
+            <joint type="free" name="joint 1">
+                <parent>world</parent>
+                <child>hand</child>
+                <init_pos>0 0 0.0 0 0 0</init_pos>
+                <init_vel>0 0 0 0 0 0</init_vel>
+            </joint>
+        </skeleton>  -->
+
+        <skeleton name="ground skeleton">
+            <mobile>false</mobile>
+            <body name="ground">
+                <transformation>0 -0.60 0 0 0 0</transformation>
+                <visualization_shape>
+                    <transformation>0 0.0 0 0 0 0</transformation>
+                    <geometry>
+                        <box>
+                            <size>5.0 0.05 1.0</size>
+                        </box>
+                    </geometry>
+                    <color>0.5 0.5 0.5</color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0 0.0 0 0 0 0</transformation>
+                    <geometry>
+                        <box>
+                            <size>5.0 0.05 1.0</size>
+                        </box>
+                    </geometry>
+                </collision_shape>                                
+            </body>
+            <joint type="weld" name="joint 1">
+                <parent>world</parent>
+                <child>ground</child>
+            </joint>
+        </skeleton> 
+
+    </world>
+</skel>
