@@ -46,6 +46,7 @@ using namespace utils;
 using namespace tiny_dnn;
 using namespace tiny_dnn::activation;
 using namespace tiny_dnn::layers;
+using namespace std;
 
 #define UNSYMCONE false
 
@@ -108,12 +109,10 @@ public:
     void timeStepping() override
     // substituting original DART contact solve with ours, keeping other steps in world->step() unchanged.
     {
-//        std::cout << "t=" << ts ;
         if (ts != 0)
         {
             auto a = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
             theta_odo = theta_odo + a[2] * mWorld->getTimeStep();
-//            std::cout << " " << theta_odo << std::endl;
         }
         
         // Integrate velocity for unconstrained skeletons
@@ -135,10 +134,6 @@ public:
         in_vec << pos[0], pos[1], pos[2],
                   vel_uncons[0], vel_uncons[1], vel_uncons[2],
                   vel_uncons[3], vel_uncons[4], vel_uncons[5];
-        //        std::cout << in_vec.transpose() << std::endl;
-        
-        //        std::cout << vel_uncons.transpose() << std::endl;
-        //        std::cout << pos[3] << " " << pos[4] << " " << theta_odo<< std::endl;
         
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
         auto collisionGroup = mWorld->getConstraintSolver()->getCollisionGroup();
@@ -149,7 +144,7 @@ public:
         if (collision)
         {
             myContactSolve(in_vec, result);
-            // mWorld->getConstraintSolver()->solve(); // grounf truth: DART contact solver
+            //mWorld->getConstraintSolver()->solve();
         }
         
         
@@ -195,9 +190,31 @@ public:
             return false;
         }
     }
+
+    bool checkVelocityRange(Eigen::VectorXd in_vec)
+    {
+        if (in_vec[3]<=20 && in_vec[3]>=-20 && in_vec[4]<=20 && in_vec[4]>=-20 && in_vec[5]<=20 && in_vec[5]>=-20) //angular
+        {
+            if (in_vec[6]<=2 && in_vec[6]>=-2 && in_vec[7]<=13 && in_vec[7]>=-13 && in_vec[8]<=2 && in_vec[8]>=-2) // linear
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        else
+        {
+            return false;
+        }
+    }
     
     void myContactSolve(Eigen::VectorXd in_vec, const dart::collision::CollisionResult& result)
     {
+        double delTime = mWorld->getTimeStep();
+        cout<<delTime<<endl;
         Eigen::VectorXd in_c = in_vec;
         in_c[3] = in_c[3] / 20.0;
         in_c[4] = in_c[4] / 20.0;
@@ -209,21 +226,29 @@ public:
         label_t c1output = c1net.predict_label(input_c);
         label_t c2output = c2net.predict_label(input_c);
         label_t c3output = c3net.predict_label(input_c);
+
+        // if (result.getNumContacts() != 0)
+        // {
+        //     cout<<"c1output is: "<<c1output<<endl;
+        //     cout<<"c2output is: "<<c2output<<endl;
+        //     cout<<"c2output is: "<<c3output<<endl;
+        // }
+
+        cout<<"Number of contacts are: "<<result.getNumContacts()<<endl;
+
         
         if (result.getNumContacts() == 1) // Point contact case
         {
             bool vel_check = ptCheckVelocityRange(in_vec);
             if (vel_check == true)
             {
+                //cout<<"c1 output is: "<<c1output<<endl;
                 if (c1output == 1) // Static case -> apply constraints
                 {
                     // set constraints
-                    auto pos1 = result.getContact(0).point;
-                    //auto pos2 = result.getContact(1).point;
-                    auto constraint1 = std::make_shared<dart::constraint::BallJointConstraint>(hand_bd, ground_bd, pos1);
-                    //auto constraint2 = std::make_shared<dart::constraint::BallJointConstraint>(hand_bd, ground_bd, pos2);
-                    mWorld->getConstraintSolver()->addConstraint(constraint1);
-                    //mWorld->getConstraintSolver()->addConstraint(constraint2);
+                    auto pos = result.getContact(0).point;
+                    auto constraint = std::make_shared<dart::constraint::BallJointConstraint>(hand_bd, ground_bd, pos);
+                    mWorld->getConstraintSolver()->addConstraint(constraint);
                     
                     // disable ground from contact detection
                     mWorld->getConstraintSolver()->getCollisionGroup()->
@@ -233,7 +258,7 @@ public:
                     mWorld->getConstraintSolver()->solve();
 
                     // restore
-                    mWorld->getConstraintSolver()->removeConstraint(constraint1);
+                    mWorld->getConstraintSolver()->removeConstraint(constraint);
                     //mWorld->getConstraintSolver()->removeConstraint(constraint2);
                     mWorld->getConstraintSolver()->getCollisionGroup()->
                     addShapeFramesOf(ground_bd->getSkeleton().get());
@@ -241,44 +266,41 @@ public:
                 else if (c1output == 0)
                 {
                     // run regreesor
-                    auto pos1 = result.getContact(0).point;
-                    //auto pos2 = result.getContact(1).point;
+                    // auto pos = result.getContact(0).point;
+                    // //auto pos2 = result.getContact(1).point;
                     
-                    Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
-                    in_r = in_vec;
-                    in_r[3] = in_r[3] / 20.0;
-                    in_r[4] = in_r[4] / 20.0;
-                    in_r[5] = in_r[5] / 20.0;
+                    // Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
+                    // in_r = in_vec;
+                    // in_r[3] = in_r[3] / 20.0;
+                    // in_r[4] = in_r[4] / 20.0;
+                    // in_r[5] = in_r[5] / 20.0;
                     
-                    vec_t input_r;
-                    input_r.assign(in_r.data(), in_r.data()+9);
+                    // vec_t input_r;
+                    // input_r.assign(in_r.data(), in_r.data()+9);
                     
-                    vec_t r1output = r1net.predict(input_r);
-                    // scaled down 100 times when training, should be okay if just train with large labels
-                    double imp = *(r1output.begin()) * 100.0; //->match the /100 in during regressor training
-                    Eigen::Vector3d result;
-                    result << imp;
-                    //result << px, pz, ptheta_y
+                    // vec_t r1output = r1net.predict(input_r);
+                    // // * 100 to match the /100 during regression training
+                    // double fx = r1output[0] * 100.0 / delTime;
+                    // double fz = r1output[1] * 100.0 / delTime;
                     // Eigen::Vector3d friction;
-                    // friction << fric, 0.0, 0.0;
+                    // friction << fx, 0.0, fz;
                     
-                    // decouple instead of blindly run one step
-                    hand_bd -> clearExternalForces();
-                    mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-                    hand_bd -> addExtForce(friction, (pos1+pos2)/2.0, false, false);
-                    hand_bd->getSkeleton()->computeForwardDynamics();
-                    hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
+                    // // decouple instead of blindly run one step
+                    // // applying the impulse. Need modificaiton!
+                    // hand_bd -> clearExternalForces();
+                    // mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+                    // hand_bd -> addExtForce(friction, pos, false, false);
+                    // hand_bd->getSkeleton()->computeForwardDynamics();
+                    // hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
                     
-                    hand_bd -> setFrictionCoeff(0.0);
-                    ground_bd -> setFrictionCoeff(0.0);
+                    // hand_bd -> setFrictionCoeff(0.0);
+                    // ground_bd -> setFrictionCoeff(0.0);
                     mWorld->getConstraintSolver()->solve();
 
-                    // restore
-                    hand_bd -> setFrictionCoeff(1.0);
-                    ground_bd ->setFrictionCoeff(1.0);
-                    mWorld->setGravity(gravity);
-                    
-//                    std::cout << "vola0" << std::endl;
+                    // // restore
+                    // hand_bd -> setFrictionCoeff(1.0);
+                    // ground_bd ->setFrictionCoeff(1.0);
+                    // mWorld->setGravity(gravity);
                 }
                 else // c1out == 2
                 {
@@ -291,8 +313,6 @@ public:
                     // restore
                     mWorld->getConstraintSolver()->getCollisionGroup()->
                     addShapeFramesOf(ground_bd->getSkeleton().get());
-                    
-//                    std::cout << "vola2" << std::endl;
                 }
             }
             else
@@ -301,16 +321,21 @@ public:
                 mWorld->getConstraintSolver()->solve();
             }
         }
-        else if (result.getNumContacts() == 4)
+        else if (result.getNumContacts() == 2) // Line contact
         {
-            if (velAbs[0] <= 3 && velAbs[1] <= 5 && velAbs[2] <= 7)
+            bool vel_check = checkVelocityRange(in_vec);
+            if (vel_check == true)
             {
+                //cout<<"c2 output is: "<<c2output<<endl;
                 if (c2output == 1)
                 {
+                    auto pos1 = result.getContact(0).point;
+                    auto pos2 = result.getContact(1).point;
+                    auto constraint1 = std::make_shared<dart::constraint::BallJointConstraint>(hand_bd, ground_bd, pos1);
+                    auto constraint2 = std::make_shared<dart::constraint::BallJointConstraint>(hand_bd, ground_bd, pos2);
                     
-                    auto constraint = std::make_shared<dart::constraint::WeldJointConstraint>(hand_bd, ground_bd);
-                    
-                    mWorld->getConstraintSolver()->addConstraint(constraint);
+                    mWorld->getConstraintSolver()->addConstraint(constraint1);
+                    mWorld->getConstraintSolver()->addConstraint(constraint2);
                     
                     // disable ground from contact detection
                     mWorld->getConstraintSolver()->getCollisionGroup()->
@@ -319,66 +344,151 @@ public:
                     mWorld->getConstraintSolver()->solve();
                     
                     // restore
-                    mWorld->getConstraintSolver()->removeConstraint(constraint);
+                    mWorld->getConstraintSolver()->removeConstraint(constraint1);
+                    mWorld->getConstraintSolver()->removeConstraint(constraint2);
                     mWorld->getConstraintSolver()->getCollisionGroup()->
                     addShapeFramesOf(ground_bd->getSkeleton().get());
                 }
                 else if (c2output == 0)
                 {
                     // run regreesor
+//                     auto pos1 = result.getContact(0).point;
+//                     auto pos2 = result.getContact(1).point;
+                    
+//                     Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
+//                     in_r = in_vec;
+//                     in_r[3] = in_r[3] / 20.0;
+//                     in_r[4] = in_r[4] / 20.0;
+//                     in_r[5] = in_r[5] / 20.0;
+                    
+//                     vec_t input_r;
+//                     input_r.assign(in_r.data(), in_r.data()+9);
+                    
+//                     vec_t r2output = r2net.predict(input_r);
+//                     // scaled down 100 times when training
+//                     double fx = r2output[0] * 100.0 /delTime;
+//                     double fz = r2output[1] * 100.0 /delTime;
+//                     double ty = r2output[2] * 100.0 /delTime;
+// //                    std::cout << fric << std::endl;
+//                     Eigen::Vector3d friction;
+//                     friction << fx, 0.0, fz;
+
+//                     Eigen::Vector3d torque;
+//                     torque << 0.0, ty, 0.0;
+//                     // decouple instead of blindly run one step
+//                     hand_bd -> clearExternalForces();
+//                     mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+//                     // middle of the point
+//                     hand_bd -> addExtForce(friction, (pos1+pos2)/2, false, false);
+//                     hand_bd -> addExtTorque(torque, false);
+//                     hand_bd->getSkeleton()->computeForwardDynamics();
+//                     hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
+                    
+//                     hand_bd -> setFrictionCoeff(0.0);
+//                     ground_bd -> setFrictionCoeff(0.0);
+                     mWorld->getConstraintSolver()->solve();
+
+//                     hand_bd -> setFrictionCoeff(1.0);
+//                     ground_bd ->setFrictionCoeff(1.0);
+//                     mWorld->setGravity(gravity);
+                }
+                else // c2out == 2
+                {
+                    mWorld->getConstraintSolver()->getCollisionGroup()->
+                    removeShapeFramesOf(ground_bd->getSkeleton().get());       
+                    mWorld->getConstraintSolver()->solve();
+                    mWorld->getConstraintSolver()->getCollisionGroup()->
+                    addShapeFramesOf(ground_bd->getSkeleton().get());
+                }
+            }
+            else
+            {
+                std::cout << "warning: c2 OOR " << in_vec.transpose() << std::endl;
+                mWorld->getConstraintSolver()->solve();
+            }
+        }
+        else if (result.getNumContacts() == 4) // surface contact
+        {
+            bool vel_check = checkVelocityRange(in_vec);
+            if (vel_check == true)
+            {
+                //cout<<"c3 output is: "<<c3output<<endl;
+                if (c3output == 1)
+                {
                     auto pos1 = result.getContact(0).point;
+                    auto pos2 = result.getContact(1).point;
                     auto pos3 = result.getContact(2).point;
+                    auto pos4 = result.getContact(3).point;
+
+                    auto w_cstr = std::make_shared<dart::constraint::WeldJointConstraint>(hand_bd, ground_bd);
+
+                    mWorld->getConstraintSolver()->addConstraint(w_cstr);
                     
-                    Eigen::VectorXd in_r = Eigen::VectorXd::Zero(5);
+                    // disable ground from contact detection
+                    mWorld->getConstraintSolver()->getCollisionGroup()->
+                    removeShapeFramesOf(ground_bd->getSkeleton().get());
+                    
+                    mWorld->getConstraintSolver()->solve();
+                    mWorld->getConstraintSolver()->removeConstraint(w_cstr);
+                    mWorld->getConstraintSolver()->getCollisionGroup()->
+                    addShapeFramesOf(ground_bd->getSkeleton().get());
+                }
+                else if (c3output == 0)
+                {
+                    Eigen::Vector6d old_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
+                    cout<<"Old velocities are: "<<old_vel.transpose()<<endl;
+                    // run regreesor
+                    auto pos1 = result.getContact(0).point;
+                    auto pos2 = result.getContact(1).point;
+                    auto pos3 = result.getContact(2).point;
+                    auto pos4 = result.getContact(3).point;
+                    
+                    Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
                     in_r = in_vec;
-                    in_r[2] = in_r[2] / 10.0;
-                    
-                    // TODO: a temporary fix utilizing linearity of the meta cone.
-                    Eigen::Vector3d velAbs;
-                    velAbs << in_r[2], in_r[3], in_r[4];
-                    velAbs = velAbs.cwiseAbs();
-                    double scale = 1.0;
-                    if (velAbs.maxCoeff() < 0.5)
-                    {
-                        in_r[2] = in_r[2] * (2.5/velAbs.maxCoeff());
-                        in_r[3] = in_r[3] * (2.5/velAbs.maxCoeff());
-                        in_r[4] = in_r[4] * (2.5/velAbs.maxCoeff());
-                        scale = 2.5/velAbs.maxCoeff();
-                    }
+                    in_r[3] = in_r[3] / 20.0;
+                    in_r[4] = in_r[4] / 20.0;
+                    in_r[5] = in_r[5] / 20.0;
                     
                     vec_t input_r;
-                    input_r.assign(in_r.data(), in_r.data()+5);
+                    input_r.assign(in_r.data(), in_r.data()+9);
                     
-                    vec_t r2output = r2net.predict(input_r);
+                    vec_t r3output = r3net.predict(input_r);
                     // scaled down 100 times when training
-//                    double fric = *(r2output.begin()) * 100.0;
-                    double fric = *(r2output.begin()) * 100.0 / scale;
-                    
-//                    std::cout << fric << std::endl;
-                    Eigen::Vector3d friction;
-                    friction << fric, 0.0, 0.0;
+                    double fx = r3output[0] * 100.0 /delTime;
+                    double fz = r3output[1] * 100.0 /delTime;
+                    double ty = r3output[2] * 100.0 /delTime;
 
-                    
+                    double tempX = 19.406 /delTime;
+                    double tempZ = -242.082 /delTime;
+                    double tempTY = -4.09366 /delTime;
+
+                    Eigen::Vector3d friction;
+                    friction << fx, 0.0, fz;
+                    //friction << tempX, 0.0, tempZ;
+                    Eigen::Vector3d torque;
+                    torque << 0.0, ty, 0.0;
+                    //torque << 0.0, tempTY, 0.0;
                     // decouple instead of blindly run one step
                     hand_bd -> clearExternalForces();
                     mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-                    hand_bd -> addExtForce(friction, (pos1+pos3)/2.0, false, false);
+                    // middle of the point
+                    hand_bd -> addExtForce(friction, (pos1+pos2+pos3+pos4)/4, false, false);
+                    hand_bd -> addExtTorque(torque, false);
                     hand_bd->getSkeleton()->computeForwardDynamics();
                     hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
                     
                     hand_bd -> setFrictionCoeff(0.0);
                     ground_bd -> setFrictionCoeff(0.0);
                     mWorld->getConstraintSolver()->solve();
-
-                    //
+                    
+                    Eigen::Vector6d new_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
+                    cout<<"New velocities are: "<<new_vel.transpose()<<endl;
                     // restore
                     hand_bd -> setFrictionCoeff(1.0);
                     ground_bd ->setFrictionCoeff(1.0);
                     mWorld->setGravity(gravity);
-                    
-//                    std::cout << "alov0" << std::endl;
                 }
-                else // c2out == 2
+                else // c3output = 2
                 {
                     // do nothing, ignore collision solving
                     
@@ -389,13 +499,11 @@ public:
                     // restore
                     mWorld->getConstraintSolver()->getCollisionGroup()->
                     addShapeFramesOf(ground_bd->getSkeleton().get());
-                    
-//                    std::cout << "alov2" << std::endl;
                 }
             }
             else
             {
-                std::cout << "warning: c2 OOR " << in_vec.transpose() << std::endl;
+                std::cout << "warning: c3 OOR " << in_vec.transpose() << std::endl;
                 mWorld->getConstraintSolver()->solve();
             }
         }
@@ -427,16 +535,16 @@ int main(int argc, char* argv[])
     WorldPtr world = SkelParser::readWorld(DART_DATA_PATH"/NN-contact-force/skel/singleBody_test.skel");
     assert(world != nullptr);
     
-    std::cout << "please input dx_0 and dtheta_0:" << std::endl;
-    double x0, th0;
-    std::cin >> x0 >> th0;
+    std::cout << "please input dtheta_x0, dtheta_y0, dtheta_z0 and dx_0, dy_0, dz_0:" << std::endl;
+    double x0, y0, z0, theta_x, theta_y, theta_z;
+    std::cin >> theta_x >> theta_y >> theta_z >> x0 >> y0 >> z0;
     
     // Create reference frames for setting the initial velocity
     Eigen::Isometry3d centerTf(Eigen::Isometry3d::Identity());
     centerTf.translation() = world->getSkeleton("hand skeleton")->getCOM();
     SimpleFrame center(Frame::World(), "center", centerTf);
-    Eigen::Vector3d v = Eigen::Vector3d(x0, 0.0, 0.0);
-    Eigen::Vector3d w = th0 * Eigen::Vector3d::UnitZ();
+    Eigen::Vector3d v = Eigen::Vector3d(x0, y0, z0);
+    Eigen::Vector3d w = Eigen::Vector3d(theta_x, theta_y, theta_z);
     center.setClassicDerivatives(v, w);
     SimpleFrame ref(&center, "root_reference");
     // ?

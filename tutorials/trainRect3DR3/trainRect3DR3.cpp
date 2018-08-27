@@ -37,7 +37,8 @@
 #include <iostream>
 #include <fstream>
 
-#define NUMSAM 500000
+//#define NUMSAM 500000
+#define NUMSAM 50
 #define UNSYMCONE false
 
 using namespace dart::dynamics;
@@ -214,7 +215,9 @@ public:
             }
             
             setbuf(stderr, buf);
+            // After solving LCP!!!
             mWorld->getConstraintSolver()->solve();
+
             if (strlen(buf) > 0)
                 {std::cerr << "omit!" << std::endl;}
             else
@@ -275,6 +278,7 @@ public:
                         auto pz = (newVel[2] - VelIn[5])/mWorld->getTimeStep();
                         auto ptheta_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w, 
                         storeOneForceInFile(px, pz, ptheta_y);
+
                     }
                 }
             }
@@ -293,7 +297,10 @@ public:
     {
         if (sampleCount < NUMSAM)
         {
-            cout<<sampleCount<<endl;
+            //cout<<sampleCount<<endl;
+            NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
+            cout<<"New velocity is: "<<NewVel.transpose()<<endl;
+            
             Eigen::Vector3d InOut_1 = Eigen::Vector3d::Zero();
             Eigen::Vector6d InOut_2 = Eigen::Vector6d::Zero();
             Eigen::Vector3d Result = Eigen::Vector3d::Zero();
@@ -340,6 +347,7 @@ public:
     
     Eigen::Vector6d VelIn;
     Eigen::Vector6d PosIn;
+    Eigen::Vector6d NewVel;
     
     char buf[BUFSIZ];
     
@@ -363,13 +371,13 @@ int main(int argc, char* argv[])
     
     MyWindow window(world);
 
-    while(1){
-        window.timeStepping();
-    }
+    // while(1){
+    //     window.timeStepping();
+    // }
     
-    // std::cout << "space bar: simulation on/off" << std::endl;
+    std::cout << "space bar: simulation on/off" << std::endl;
     
-    // glutInit(&argc, argv);
-    // window.initWindow(640, 480, "Simple Test");
-    // glutMainLoop();
+    glutInit(&argc, argv);
+    window.initWindow(640, 480, "Simple Test");
+    glutMainLoop();
 }

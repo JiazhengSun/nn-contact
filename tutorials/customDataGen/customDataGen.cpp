@@ -37,9 +37,8 @@
 #include <iostream>
 #include <fstream>
 
-#define NUMSAM 30000
-#define INWIDTH 5
-#define OUTWIDTH 1
+//#define NUMSAM 500000
+#define NUMSAM 1
 #define UNSYMCONE false
 
 using namespace dart::dynamics;
@@ -50,10 +49,6 @@ using namespace std;
 
 const char* path;
 ofstream file;
-int label_0;
-int label_1;
-int label_2;
-
 class MyWindow : public dart::gui::SimWindow
 {
 public:
@@ -66,10 +61,6 @@ public:
         
         sampleCount = 0;
         ts = 0;
-
-        label_0 = 0;
-        label_1 = 0;
-        label_2 = 0;
     }
     
     void keyboard(unsigned char key, int x, int y) override
@@ -93,43 +84,9 @@ public:
     void timeStepping() override
     {
         Eigen::Vector6d pos;
-        double my_flag = dart::math::random(0.0,1.0);
-        auto Pi = dart::math::constants<double>::pi();
-
-        double rd, theta, phi;
-        double alpha_y, alpha_a; //a is rotational angle of x or z
-        alpha_y = dart::math::random(0.0, 2.0*Pi);
-        auto exp_y = 
-
-        // double theta_x, theta_y, theta_z;
-        // theta_x = 0; theta_y = 0; theta_z = 0;
-        
-        // theta_y = dart::math::random(0.0, 2.0*Pi);
-        // auto sinY = std::sin(theta_y/2);
-        // auto cosY = std::cos(theta_y/2);
-        // Eigen::Quaterniond q_y;
-        // q_y.x() = 0 * sinY;     q_y.y() = 1 * sinY;     q_y.z() = 0 * sinY;     q_y.w() = cosY;  
-
-        // Eigen::Quaterniond q_next;
-        // if(my_flag <= 0.5) {
-        //     theta_x = dart::math::random(0,2.0*Pi);
-        //     auto sinX = std::sin(theta_x/2);
-        //     auto cosX = std::cos(theta_x/2); 
-        //     q_next.x() = 1 * sinX;     q_next.y() = 0 * sinX;     q_next.z() = 0 * sinX;     q_next.w() = cosX;         
-        // } else {
-        //     theta_z = dart::math::random(0,2.0*Pi);
-        //     auto sinZ = std::sin(theta_z/2);
-        //     auto cosZ = std::cos(theta_z/2);
-        //     q_next.x() = 0 * sinZ;     q_next.y() = 0 * sinZ;     q_next.z() = 1 * sinZ;     q_next.w() = cosZ;
-        // }
-
-        // Eigen::Quaterniond q_result;
-        // q_result = q_y * q_next;
-
-        // Eigen::Vector3d exp_map = dart::math::quatToExp(q_result);
 
         double h = 1.0;
-        pos << exp_map[0], exp_map[1], exp_map[2], 0,h,0;
+        pos << 0,0,0, 0,h,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         mWorld->getSkeleton("hopper")->getJoint(0)->setVelocities(Eigen::Vector6d::Zero());
         
@@ -148,7 +105,7 @@ public:
             }
         }
 
-        pos << exp_map[0], exp_map[1], exp_map[2], 0,h-(1e-7)-miny,0;
+        pos << 0,0,0, 0,h-(1e-7)-miny,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         
         
@@ -162,7 +119,7 @@ public:
         vel[5] = dart::math::random(-2,2); //z vel
         
         
-        // cosYeate reference frames for setting the initial velocity
+        // Create reference frames for setting the initial velocity
         Eigen::Isometry3d centerTf(Eigen::Isometry3d::Identity());
         centerTf.translation() = bNode->getSkeleton()->getCOM();
         SimpleFrame center(Frame::World(), "center", centerTf);
@@ -178,6 +135,7 @@ public:
         
         VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
         PosIn = bNode->getSkeleton()->getPositions();
+        auto oldAng = bNode->getAngularMomentum();
         
         // check collision
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
@@ -185,15 +143,16 @@ public:
         dart::collision::CollisionOption option;
         dart::collision::CollisionResult result;
         bool collision = collisionGroup->collide(option, &result);
-        if (collision && result.getNumContacts() == 2)
+
+        if (collision && result.getNumContacts() == 4)
         {
             if (UNSYMCONE)
             {
                 auto p1 = result.getContact(0).point;
                 auto localp1 =  bNode->getWorldTransform().inverse() * p1;
-                Eigen::Vector3d VcosX1;
-                VcosX1 = bNode->getLinearVelocity(Eigen::Vector3d(localp1[0], localp1[1], localp1[2]),Frame::World());
-                if (VcosX1[0] > 0)
+                Eigen::Vector3d Vcp1;
+                Vcp1 = bNode->getLinearVelocity(Eigen::Vector3d(localp1[0], localp1[1], localp1[2]),Frame::World());
+                if (Vcp1[0] > 0)
                 {
                     bNode->setFrictionCoeff(0.75);
                     mWorld->getSkeleton("ground skeleton")->getBodyNode(0)->setFrictionCoeff(0.75);
@@ -204,9 +163,10 @@ public:
                     mWorld->getSkeleton("ground skeleton")->getBodyNode(0)->setFrictionCoeff(1.5);
                 }
             }
-            
             setbuf(stderr, buf);
+            // After solving LCP!!!
             mWorld->getConstraintSolver()->solve();
+
             if (strlen(buf) > 0)
                 {std::cerr << "omit!" << std::endl;}
             else
@@ -227,13 +187,12 @@ public:
                 
                 auto force1 = mWorld->getConstraintSolver()->getLastCollisionResult().getContact(0).force;
                 auto force2 = mWorld->getConstraintSolver()->getLastCollisionResult().getContact(1).force;
+                auto force3 = mWorld->getConstraintSolver()->getLastCollisionResult().getContact(2).force;
+                auto force4 = mWorld->getConstraintSolver()->getLastCollisionResult().getContact(3).force;
                 
-                if (force1.norm() < 1e-3 && force2.norm() < 1e-3) // Both points almost no contact, detached.
+                if (force1.norm() < 1e-3 && force2.norm() < 1e-3 && force3.norm() < 1e-3 && force4.norm() < 1e-3)
                 {
-                    if (label_2 < NUMSAM) {
-                        storeOneInFile(2.0);
-                        label_2 += 1;
-                    }
+                    //storeOneInFile(2.0);
                 }
                 else // non-trivial contact impulse
                 {
@@ -242,25 +201,33 @@ public:
                     
                     auto initialPoint2 = result.getContact(1).point;
                     auto localPoint2 =  bNode->getWorldTransform().inverse() * initialPoint2;
+
+                    auto initialPoint3 = result.getContact(2).point;
+                    auto localPoint3 =  bNode->getWorldTransform().inverse() * initialPoint3;
                     
-                    Eigen::Vector3d VcosX1, VcosX2;
+                    auto initialPoint4 = result.getContact(3).point;
+                    auto localPoint4 =  bNode->getWorldTransform().inverse() * initialPoint4;
                     
-                    VcosX1 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint1[0], localPoint1[1], localPoint1[2]),Frame::World(),Frame::World());
-                    VcosX2 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint2[0], localPoint2[1], localPoint2[2]),Frame::World(),Frame::World());
+                    Eigen::Vector3d Vcp1, Vcp2, Vcp3, Vcp4;
                     
-                    if (VcosX1.norm() < 5e-4 && VcosX2.norm() < 5e-4) // both point's velocity all small, static
+                    Vcp1 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint1[0], localPoint1[1], localPoint1[2]),Frame::World(),Frame::World());
+                    Vcp2 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint2[0], localPoint2[1], localPoint2[2]),Frame::World(),Frame::World());
+                    Vcp3 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint3[0], localPoint3[1], localPoint3[2]),Frame::World(),Frame::World());
+                    Vcp4 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint4[0], localPoint4[1], localPoint4[2]),Frame::World(),Frame::World());                    
+                    if (Vcp1.norm() < 5e-4 && Vcp2.norm() < 5e-4 && Vcp3.norm() < 5e-4 && Vcp4.norm() < 5e-4) // both point's velocity all small, static
                     {
-                        if (label_1 < NUMSAM) {
-                            storeOneInFile(1.0); // linear velocity small->static case
-                            label_1 +=1;
-                        }
+                        //storeOneInFile(1.0);
                     }
                     else
                     {
-                        if (label_0 < NUMSAM) {
-                            storeOneInFile(0.0); // linear velocity big enough -> dynamic case
-                            label_0 +=1;
-                        }
+                        // non-sticking
+                        Eigen::Vector3d newVel = bNode->getCOMLinearVelocity(Frame::World(),Frame::World());
+                        Eigen::Vector3d newAng = bNode->getAngularMomentum();
+                        auto px = (newVel[0] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
+                        auto pz = (newVel[2] - VelIn[5])/mWorld->getTimeStep();
+                        auto ptheta_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w, 
+                        storeOneForceInFile(px, pz, ptheta_y);
+
                     }
                 }
             }
@@ -269,54 +236,38 @@ public:
         }
         else
         {
-            std::cout << "invalid: continue" << std::endl;
             SimWindow::timeStepping();
-        }
-
-        if (label_0 == NUMSAM && label_1 == NUMSAM && label_2 == NUMSAM)
-        {
-            file.close();
-            printf("Done\n");           
-            sampleCount++;
-            cout<<"Label 0 number is: "<<label_0<<endl;
-            cout<<"Label 1 number is: "<<label_1<<endl;
-            cout<<"Label 2 number is: "<<label_2<<endl;
         }
         
         ts++;
     }
     
-    void storeOneInFile(double label)
+    void storeOneForceInFile(double px, double pz, double ptheta_y)
     {
-        cout<<sampleCount<<endl;
+        if (sampleCount < NUMSAM)
+        {
+            cout<<sampleCount<<endl;
+            NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
+            Eigen::Vector3d InOut_1 = Eigen::Vector3d::Zero();
+            Eigen::Vector6d InOut_2 = Eigen::Vector6d::Zero();
+            Eigen::Vector3d Result = Eigen::Vector3d::Zero();
+            InOut_1 << PosIn[0], PosIn[1], PosIn[2];
+            InOut_2 <<
+                    VelIn[0], VelIn[1],VelIn[2], //angular vels
+                    VelIn[3], VelIn[4], VelIn[5]; //linear vels
+            Result << px, pz, ptheta_y;
 
-        Eigen::Vector6d InOut_1 = Eigen::Vector6d::Zero();
-        Eigen::Vector6d InOut_2 = Eigen::Vector6d::Zero();
-        InOut_1 << sin(PosIn[0]), cos(PosIn[0]), //theta_x
-                sin(PosIn[1]), cos(PosIn[1]), //theta_y
-                sin(PosIn[2]), cos(PosIn[2]); //theta_z
-        InOut_2 <<
-                VelIn[0]/10.0, VelIn[1]/10.0,VelIn[2]/10.0, //angular vels
-                VelIn[3], VelIn[4], VelIn[5]; //linear vels
-        //cout<<"Here is the result after transpose"<<endl;
-        //std::cout << InOut_1.transpose() << std::endl;
-        //std::cout << InOut_2.transpose() << std::endl;
-        //cout<<label<<endl;
-        //cout<<"Here is the result before transpose"<<endl;
-        //cout<<InOut<<endl;
-        for (int i = 0; i < InOut_1.size(); i++) {
-            file<< InOut_1[i];
-            file<<",";
+            cout<<"Old velocity is: "<<InOut_2.transpose()<<endl;
+            cout<<"New velocity is: "<<NewVel.transpose()<<endl;
+            cout<<"Result Impulse is: "<<Result.transpose()<<endl;
+
+            sampleCount++;
         }
-        for(int i = 0; i < InOut_2.size(); i++) {
-            file<< InOut_2[i];
-            file<<",";
+        if (sampleCount == NUMSAM)
+        {
+            printf("Done\n");           
+            sampleCount++;
         }
-        file<<label;
-        file<<",";
-        file<<"\n";
-        sampleCount++;
-        
     }
     
     BodyNodePtr bNode;
@@ -327,6 +278,7 @@ public:
     
     Eigen::Vector6d VelIn;
     Eigen::Vector6d PosIn;
+    Eigen::Vector6d NewVel;
     
     char buf[BUFSIZ];
     
@@ -335,12 +287,6 @@ protected:
 
 int main(int argc, char* argv[])
 {
-    if (UNSYMCONE) {
-        path = "/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/train_data/3D/rect_c2_3D_unsym.csv";   
-    } else {
-        path = "/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/train_data/3D/rect_c2_3D_sym.csv";
-    }
-    file.open(path);
 
     WorldPtr world = SkelParser::readWorld(DART_DATA_PATH"/NN-contact-force/skel/singleBody_genData.skel");
     assert(world != nullptr);

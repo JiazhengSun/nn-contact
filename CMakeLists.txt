@@ -328,7 +328,8 @@ if(TARGET dart)
     dart_add_tutorial(tutorials/trainRect3DR2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/trainRect3DR3 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
 
-    dart_add_tutorial(tutorials/customSampling dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
+    dart_add_tutorial(tutorials/customDataGen dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
+    dart_add_tutorial(tutorials/customRun dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
 
     # Add a "tutorials" target to build tutorials.
     get_property(tutorials GLOBAL PROPERTY DART_TUTORIALS)

@@ -22,4 +22,5 @@ add_subdirectory(trainRect3DR1);
 add_subdirectory(trainRect3DR2);
 add_subdirectory(trainRect3DR3);
 
-add_subdirectory(customSampling)
+add_subdirectory(customDataGen)
+add_subdirectory(customRun)
