@@ -214,7 +214,6 @@ public:
     void myContactSolve(Eigen::VectorXd in_vec, const dart::collision::CollisionResult& result)
     {
         double delTime = mWorld->getTimeStep();
-        cout<<delTime<<endl;
         Eigen::VectorXd in_c = in_vec;
         in_c[3] = in_c[3] / 20.0;
         in_c[4] = in_c[4] / 20.0;
@@ -410,7 +409,8 @@ public:
         else if (result.getNumContacts() == 4) // surface contact
         {
             bool vel_check = checkVelocityRange(in_vec);
-            if (vel_check == true)
+            //if (vel_check == true)
+            if(true)
             {
                 //cout<<"c3 output is: "<<c3output<<endl;
                 if (c3output == 1)
@@ -454,9 +454,9 @@ public:
                     
                     vec_t r3output = r3net.predict(input_r);
                     // scaled down 100 times when training
-                    double fx = r3output[0] * 100.0 /delTime;
-                    double fz = r3output[1] * 100.0 /delTime;
-                    double ty = r3output[2] * 100.0 /delTime;
+                    double fx = r3output[0] * 100.0;// /delTime;
+                    double fz = r3output[1] * 100.0;// /delTime;
+                    double ty = r3output[2] * 100.0;// /delTime;
 
                     double tempX = 19.406 /delTime;
                     double tempZ = -242.082 /delTime;

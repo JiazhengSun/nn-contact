@@ -276,9 +276,9 @@ public:
                         // non-sticking
                         Eigen::Vector3d newVel = bNode->getCOMLinearVelocity(Frame::World(),Frame::World());
                         Eigen::Vector3d newAng = bNode->getAngularMomentum();
-                        auto px = (newVel[0] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
-                        auto pz = (newVel[2] - VelIn[5])/mWorld->getTimeStep();
-                        auto ptheta_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w, 
+                        auto px = newVel[0] - VelIn[3]; // linear impulse in one time step
+                        auto pz = newVel[2] - VelIn[5];
+                        auto ptheta_y = newAng[1] - oldAng[1]; // Impulse = delMomentum. Momentum = I*w, 
                         storeOneForceInFile(px, pz, ptheta_y);
     //                    std::cout << "a0" << std::endl;
                     }
