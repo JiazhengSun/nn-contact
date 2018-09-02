@@ -224,7 +224,7 @@ public:
                     else
                     {
                         NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
-                        Eigen::Vector3d newAng = bNode->getWorldTransform()* bNode->getAngularMomentum();
+                        Eigen::Vector3d newAng = bNode->getWorldTransform().linear()* bNode->getAngularMomentum();
                         auto fx = (NewVel[3] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
                         auto fz = (NewVel[5] - VelIn[5])/mWorld->getTimeStep();
                         auto t_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w,

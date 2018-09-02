@@ -274,7 +274,7 @@ public:
                     {
                         // non-sticking
                         NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
-                        Eigen::Vector3d newAng = bNode->getWorldTransform()* bNode->getAngularMomentum();
+                        Eigen::Vector3d newAng = bNode->getWorldTransform().linear()* bNode->getAngularMomentum();
                         auto fx = (NewVel[3] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
                         auto fz = (NewVel[5] - VelIn[5])/mWorld->getTimeStep();
                         auto t_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w,
@@ -306,12 +306,7 @@ public:
                     VelIn[0]/20.0, VelIn[1]/20.0,VelIn[2]/20.0, //angular vels
                     VelIn[3], VelIn[4], VelIn[5]; //linear vels
             Result << px, pz, ptheta_y;
-            //cout<<"Here is the result after transpose"<<endl;
-            //std::cout << InOut_1.transpose() << std::endl;
-            //std::cout << InOut_2.transpose() << std::endl;
-            //cout<<Result.transpose()<<endl;
-            //cout<<"Here is the result before transpose"<<endl;
-            //cout<<InOut<<endl;
+            
             for (int i = 0; i < InOut_1.size(); i++) {
                 file<< InOut_1[i];
                 file<<",";
@@ -371,17 +366,16 @@ int main(int argc, char* argv[])
     world->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
 //    world->getSkeleton("ground skeleton")->getBodyNode(0)->setFrictionCoeff(0.0);
 //    world->getSkeleton("hopper")->getBodyNode(0)->setFrictionCoeff(0.0);
-    
-    
+
     MyWindow window(world);
 
     while(1){
         window.timeStepping();
     }
     
-    // std::cout << "space bar: simulation on/off" << std::endl;
-    
-    // glutInit(&argc, argv);
-    // window.initWindow(640, 480, "Simple Test");
-    // glutMainLoop();
+//     std::cout << "space bar: simulation on/off" << std::endl;
+//
+//     glutInit(&argc, argv);
+//     window.initWindow(640, 480, "Simple Test");
+//     glutMainLoop();
 }

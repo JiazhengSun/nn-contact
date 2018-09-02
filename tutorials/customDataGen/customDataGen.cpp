@@ -86,7 +86,7 @@ public:
         Eigen::Vector6d pos;
 
         double h = 1.0;
-        pos << 0,2.40961,0, 0,h,0;
+        pos << 1.19221,    -0.312608,    0.527612,0,h,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         mWorld->getSkeleton("hopper")->getJoint(0)->setVelocities(Eigen::Vector6d::Zero());
         
@@ -104,18 +104,17 @@ public:
                 miny = vt_pos[1];
             }
         }
-
-        pos << 0,0,0, 0,h-(1e-7)-miny,0;
+        pos << 1.19221,    -0.312608,    0.527612,0,h-(1e-7)-miny,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         
         Eigen::Vector6d vel = Eigen::Vector6d::Zero();
-        vel[0] = -0.893077*20.0; //wx
-        vel[1] = 0.0594004*20.0; //wy
-        vel[2] = 0.342299*20.0; //wz
+        vel[0] = 0.373545*20.0; //wx
+        vel[1] = 0.177953*20.0; //wy
+        vel[2] = 0.860873*20.0; //wz
         
-        vel[3] = -4.92302; //x vel
-        vel[4] = -3.03119; //y vel
-        vel[5] = -4.33158; //z vel
+        vel[3] = 3.46167; //x vel
+        vel[4] = -0.730712; //y vel
+        vel[5] = -4.08035; //z vel
         
         // Create reference frames for setting the initial velocity
         Eigen::Isometry3d centerTf(Eigen::Isometry3d::Identity());
@@ -129,8 +128,6 @@ public:
         ref.setRelativeTransform(bNode->getTransform(&center));
         bNode->getSkeleton()->getJoint(0)->setVelocities(ref.getSpatialVelocity());
         Eigen::Vector3d oldAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
-        
-        //            std::cout << "vel_set:" << bNode->getSpatialVelocity(Frame::World(),Frame::World()).transpose() << std::endl;
         PosIn = bNode->getSkeleton()->getPositions();
         // check collision
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
@@ -138,6 +135,7 @@ public:
         dart::collision::CollisionOption option;
         dart::collision::CollisionResult result;
         bool collision = collisionGroup->collide(option, &result);
+        cout<<"Contact number is: "<<result.getNumContacts()<<endl;
         if (collision && result.getNumContacts() == 4)
         {
 
@@ -169,7 +167,7 @@ public:
                 auto force3 = mWorld->getConstraintSolver()->getLastCollisionResult().getContact(2).force;
                 auto force4 = mWorld->getConstraintSolver()->getLastCollisionResult().getContact(3).force;
                 
-                if (force1.norm() < 1e-3 && force2.norm() < 1e-3 && force3.norm() < 1e-3 && force4.norm() < 1e-3)
+                if (force1.norm() < 1e-3 && force2.norm()< 1e-3 && force3.norm() < 1e-3 && force4.norm() < 1e-3)
                 {
                     cout<<"DETACHED"<<endl;
                 }
@@ -183,7 +181,7 @@ public:
 
                     auto initialPoint3 = result.getContact(2).point;
                     auto localPoint3 =  bNode->getWorldTransform().inverse() * initialPoint3;
-                    
+
                     auto initialPoint4 = result.getContact(3).point;
                     auto localPoint4 =  bNode->getWorldTransform().inverse() * initialPoint4;
                     
@@ -194,7 +192,7 @@ public:
                     Vcp3 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint3[0], localPoint3[1], localPoint3[2]),Frame::World(),Frame::World());
                     Vcp4 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint4[0], localPoint4[1], localPoint4[2]),Frame::World(),Frame::World());
                     
-                    if (Vcp1.norm() < 5e-4 && Vcp2.norm() < 5e-4 && Vcp3.norm() < 5e-4 && Vcp4.norm() < 5e-4) // both point's velocity all small, static
+                    if (Vcp1.norm() < 5e-4  && Vcp2.norm()< 5e-4 && Vcp3.norm() < 5e-4 && Vcp4.norm() < 5e-4) // both point's velocity all small, static
                     {
                         cout<<"Static!!!!"<<endl;
                     }
