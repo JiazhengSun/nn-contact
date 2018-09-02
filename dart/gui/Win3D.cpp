@@ -41,7 +41,7 @@ namespace gui {
 Win3D::Win3D()
   : GlutWindow(),
     mTrans(0.0, 0.0, 0.0),
-    mEye(0.0, 0.0, 1.0),
+    mEye(0.0, 3.0, 3.0),
     mUp(0.0, 1.0, 0.0),
     mZoom(1.0),
     mPersp(45.0),

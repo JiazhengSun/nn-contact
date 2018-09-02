@@ -193,12 +193,8 @@ public:
         Eigen::Vector3d w = Eigen::Vector3d(vel[0], vel[1], vel[2]);
         center.setClassicDerivatives(v, w);
         SimpleFrame ref(&center, "root_reference");
-        // 
         ref.setRelativeTransform(bNode->getTransform(&center));
         bNode->getSkeleton()->getJoint(0)->setVelocities(ref.getSpatialVelocity());
-        
-        //            std::cout << "vel_set:" << bNode->getSpatialVelocity(Frame::World(),Frame::World()).transpose() << std::endl;
-        
         VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
         PosIn = bNode->getSkeleton()->getPositions();
         
@@ -212,8 +208,6 @@ public:
         //Single point collision
         if (collision && result.getNumContacts() == 1)
         {
-
-            //Don't worry about unsymcone yet
 
             if (UNSYMCONE)
             {
@@ -280,7 +274,6 @@ public:
                             storeOneInFile(1.0); // linear velocity small->static case
                             label_1 +=1;
                         }
-                        
                     }
                     else
                     {

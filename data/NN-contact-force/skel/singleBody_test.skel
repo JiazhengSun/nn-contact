@@ -6,7 +6,6 @@
             <gravity>0 -10 0</gravity>
             <collision_detector>dart</collision_detector>
         </physics>
-        
         <skeleton name="ground skeleton">
             <mobile>false</mobile>
             <body name="ground">
@@ -15,7 +14,7 @@
                     <transformation>0 0.0 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>5.0 0.05 1.0</size>
+                            <size>5.0 0.05 3.0</size>
                         </box>
                     </geometry>
                     <color>0.5 0.5 0.5</color>
@@ -28,7 +27,7 @@
                             <offset>0.0</offset>
                         </plane> -->
                         <box>
-                            <size>20.0 0.05 1.0</size>
+                            <size>20.0 0.05 20.0</size>
                         </box>
                     </geometry>
                 </collision_shape>                                

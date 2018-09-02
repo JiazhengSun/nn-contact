@@ -624,6 +624,7 @@ class network {
             file_format format = file_format::binary) {
 #ifndef CNN_NO_SERIALIZATION
     std::ifstream ifs(filename.c_str(), std::ios::binary | std::ios::in);
+    
     if (ifs.fail() || ifs.bad()) throw nn_error("failed to open:" + filename);
 
     switch (format) {

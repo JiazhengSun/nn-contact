@@ -86,7 +86,7 @@ public:
         Eigen::Vector6d pos;
 
         double h = 1.0;
-        pos << 0,0,0, 0,h,0;
+        pos << 0,2.40961,0, 0,h,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         mWorld->getSkeleton("hopper")->getJoint(0)->setVelocities(Eigen::Vector6d::Zero());
         
@@ -108,16 +108,14 @@ public:
         pos << 0,0,0, 0,h-(1e-7)-miny,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         
-        
         Eigen::Vector6d vel = Eigen::Vector6d::Zero();
-        vel[0] = dart::math::random(-20,20);
-        vel[1] = dart::math::random(-20,20);
-        vel[2] = dart::math::random(-20,20);
-
-        vel[3] = dart::math::random(-2,2); //x vel
-        vel[4] = dart::math::random(-13,13); //y vel
-        vel[5] = dart::math::random(-2,2); //z vel
+        vel[0] = -0.893077*20.0; //wx
+        vel[1] = 0.0594004*20.0; //wy
+        vel[2] = 0.342299*20.0; //wz
         
+        vel[3] = -4.92302; //x vel
+        vel[4] = -3.03119; //y vel
+        vel[5] = -4.33158; //z vel
         
         // Create reference frames for setting the initial velocity
         Eigen::Isometry3d centerTf(Eigen::Isometry3d::Identity());
@@ -130,43 +128,24 @@ public:
         // ?
         ref.setRelativeTransform(bNode->getTransform(&center));
         bNode->getSkeleton()->getJoint(0)->setVelocities(ref.getSpatialVelocity());
+        Eigen::Vector3d oldAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
         
         //            std::cout << "vel_set:" << bNode->getSpatialVelocity(Frame::World(),Frame::World()).transpose() << std::endl;
-        
-        VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
         PosIn = bNode->getSkeleton()->getPositions();
-        auto oldAng = bNode->getAngularMomentum();
-        
         // check collision
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
         auto collisionGroup = mWorld->getConstraintSolver()->getCollisionGroup();
         dart::collision::CollisionOption option;
         dart::collision::CollisionResult result;
         bool collision = collisionGroup->collide(option, &result);
-
         if (collision && result.getNumContacts() == 4)
         {
-            if (UNSYMCONE)
-            {
-                auto p1 = result.getContact(0).point;
-                auto localp1 =  bNode->getWorldTransform().inverse() * p1;
-                Eigen::Vector3d Vcp1;
-                Vcp1 = bNode->getLinearVelocity(Eigen::Vector3d(localp1[0], localp1[1], localp1[2]),Frame::World());
-                if (Vcp1[0] > 0)
-                {
-                    bNode->setFrictionCoeff(0.75);
-                    mWorld->getSkeleton("ground skeleton")->getBodyNode(0)->setFrictionCoeff(0.75);
-                }
-                else
-                {
-                    bNode->setFrictionCoeff(1.5);
-                    mWorld->getSkeleton("ground skeleton")->getBodyNode(0)->setFrictionCoeff(1.5);
-                }
-            }
-            setbuf(stderr, buf);
-            // After solving LCP!!!
-            mWorld->getConstraintSolver()->solve();
 
+            setbuf(stderr, buf);
+            cout<<"pre-contact velocity is: "<<bNode->getSpatialVelocity(Frame::World(),Frame::World()).transpose()<<endl;
+            VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
+            mWorld->getConstraintSolver()->solve();
+            
             if (strlen(buf) > 0)
                 {std::cerr << "omit!" << std::endl;}
             else
@@ -192,7 +171,7 @@ public:
                 
                 if (force1.norm() < 1e-3 && force2.norm() < 1e-3 && force3.norm() < 1e-3 && force4.norm() < 1e-3)
                 {
-                    //storeOneInFile(2.0);
+                    cout<<"DETACHED"<<endl;
                 }
                 else // non-trivial contact impulse
                 {
@@ -213,21 +192,20 @@ public:
                     Vcp1 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint1[0], localPoint1[1], localPoint1[2]),Frame::World(),Frame::World());
                     Vcp2 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint2[0], localPoint2[1], localPoint2[2]),Frame::World(),Frame::World());
                     Vcp3 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint3[0], localPoint3[1], localPoint3[2]),Frame::World(),Frame::World());
-                    Vcp4 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint4[0], localPoint4[1], localPoint4[2]),Frame::World(),Frame::World());                    
+                    Vcp4 = bNode->getLinearVelocity(Eigen::Vector3d(localPoint4[0], localPoint4[1], localPoint4[2]),Frame::World(),Frame::World());
+                    
                     if (Vcp1.norm() < 5e-4 && Vcp2.norm() < 5e-4 && Vcp3.norm() < 5e-4 && Vcp4.norm() < 5e-4) // both point's velocity all small, static
                     {
-                        //storeOneInFile(1.0);
+                        cout<<"Static!!!!"<<endl;
                     }
                     else
-                    {
-                        // non-sticking
-                        Eigen::Vector3d newVel = bNode->getCOMLinearVelocity(Frame::World(),Frame::World());
-                        Eigen::Vector3d newAng = bNode->getAngularMomentum();
-                        auto px = (newVel[0] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
-                        auto pz = (newVel[2] - VelIn[5])/mWorld->getTimeStep();
-                        auto ptheta_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w, 
-                        storeOneForceInFile(px, pz, ptheta_y);
-
+                    {   cout<<"DYNAMICCCC!"<<endl;
+                        NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
+                        Eigen::Vector3d newAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
+                        auto fx = (NewVel[3] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
+                        auto fz = (NewVel[5] - VelIn[5])/mWorld->getTimeStep();
+                        double t_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w,
+                        storeOneForceInFile(fx, fz, t_y);
                     }
                 }
             }
@@ -242,12 +220,10 @@ public:
         ts++;
     }
     
-    void storeOneForceInFile(double px, double pz, double ptheta_y)
+    void storeOneForceInFile(double fx, double fz, double t_y)
     {
         if (sampleCount < NUMSAM)
         {
-            cout<<sampleCount<<endl;
-            NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
             Eigen::Vector3d InOut_1 = Eigen::Vector3d::Zero();
             Eigen::Vector6d InOut_2 = Eigen::Vector6d::Zero();
             Eigen::Vector3d Result = Eigen::Vector3d::Zero();
@@ -255,15 +231,13 @@ public:
             InOut_2 <<
                     VelIn[0], VelIn[1],VelIn[2], //angular vels
                     VelIn[3], VelIn[4], VelIn[5]; //linear vels
-            Result << px, pz, ptheta_y;
-
-            cout<<"Old velocity is: "<<InOut_2.transpose()<<endl;
+            Result << fx, fz, t_y;
+            cout<<"Contact position is: "<<PosIn.transpose()<<endl;
             cout<<"New velocity is: "<<NewVel.transpose()<<endl;
-            cout<<"Result Impulse is: "<<Result.transpose()<<endl;
-
+            cout<<"Result Forces are: "<<Result.transpose()<<endl;
             sampleCount++;
         }
-        if (sampleCount == NUMSAM)
+        if (sampleCount >= NUMSAM)
         {
             printf("Done\n");           
             sampleCount++;

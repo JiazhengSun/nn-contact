@@ -175,9 +175,9 @@ public:
         vel[1] = dart::math::random(-20,20);
         vel[2] = dart::math::random(-20,20);
 
-        vel[3] = dart::math::random(-2,2); //x vel
+        vel[3] = dart::math::random(-5,5); //x vel
         vel[4] = dart::math::random(-13,13); //y vel
-        vel[5] = dart::math::random(-2,2); //z vel
+        vel[5] = dart::math::random(-5,5); //z vel
         
         
         // Create reference frames for setting the initial velocity
@@ -196,8 +196,7 @@ public:
         
         VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
         PosIn = bNode->getSkeleton()->getPositions();
-        auto oldAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
-
+        Eigen::Vector3d oldAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
         // check collision
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
         auto collisionGroup = mWorld->getConstraintSolver()->getCollisionGroup();
@@ -274,13 +273,12 @@ public:
                     else
                     {
                         // non-sticking
-                        Eigen::Vector3d newVel = bNode->getCOMLinearVelocity(Frame::World(),Frame::World());
-                        Eigen::Vector3d newAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
-                        auto px = newVel[0] - VelIn[3]; // linear impulse in one time step
-                        auto pz = newVel[2] - VelIn[5];
-                        auto ptheta_y = newAng[1] - oldAng[1]; // Impulse = delMomentum. Momentum = I*w, 
-                        storeOneForceInFile(px, pz, ptheta_y);
-    //                    std::cout << "a0" << std::endl;
+                        NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
+                        Eigen::Vector3d newAng = bNode->getWorldTransform()* bNode->getAngularMomentum();
+                        auto fx = (NewVel[3] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
+                        auto fz = (NewVel[5] - VelIn[5])/mWorld->getTimeStep();
+                        auto t_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w,
+                        storeOneForceInFile(fx, fz, t_y);
                     }
                 }
             }
@@ -346,6 +344,7 @@ public:
     
     Eigen::Vector6d VelIn;
     Eigen::Vector6d PosIn;
+    Eigen::Vector6d NewVel;
     
     char buf[BUFSIZ];
     

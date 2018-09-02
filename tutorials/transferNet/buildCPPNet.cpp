@@ -245,7 +245,9 @@ int main(int argc, char* argv[])
     assert(world != nullptr);
     world->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
     
+    //cout<<"opening weights file"<<endl;
     string temp ="rect_r3_sym_3D_weights.csv";
+    //cout<<"opening bias file"<<endl;
     string temp_2 ="rect_r3_sym_3D_bias.csv";
     const char* weight_name;
     const char* bias_name;
@@ -276,39 +278,39 @@ int main(int argc, char* argv[])
 
     //Testing if network models are successfully transfered by testing specific data set
 
-    // vector<vector<double>> x_test;
-    // double first_arr[] = {0.510521, -0.859865,  -2.08544,   -6.72442,   -2.32748};
-    // vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
-    // x_test.push_back(first_vec);
-
-    // double second_arr[] = {-0.328948,   -0.944348,  -0.0272732, 9.12826,    -4.19388};
-    // vector<double> second_vec (second_arr, second_arr + sizeof(second_arr) / sizeof(double));
-    // x_test.push_back(second_vec);
-
-    // double third_arr[] = {0.16081,  0.986985,   3.58803,    -9.08075,   -0.740867};
-    // vector<double> third_vec (third_arr, third_arr + sizeof(third_arr) / sizeof(double));
-    // x_test.push_back(third_vec);
-
-    // double fourth_arr[] = {-0.132366,   -0.991201,  2.15397,    7.04784,    0.526174};
-    // vector<double> fourth_vec (fourth_arr, fourth_arr + sizeof(fourth_arr) / sizeof(double));
-    // x_test.push_back(fourth_vec);
-
-    // double fifth_arr[] = {0.272638, -0.962117,  3.54762,    7.57354,    -4.66197};
-    // vector<double> fifth_vec (fifth_arr, fifth_arr + sizeof(fifth_arr) / sizeof(double));
-    // x_test.push_back(fifth_vec);
-
-    // for (int k = 0; k < 5; k++)
-    // {
-    //     vec_t in;
-    //     double* test_pr = &x_test[k].front();
-    //     in.assign(test_pr, test_pr + x_test[k].size());
-
-    //     vec_t result = net.predict(in);
-    //     for (int i = 0; i < result.size(); i++) {
-    //         cout<<result[i]<<' ';
-    //     }
-    //     cout<<' '<<endl;
-    // }
+//     vector<vector<double>> x_test;
+//     double first_arr[] = {-1.93004, 1.93004, -0.511833, 0.692334, 0.0538576, -0.81607, 1.53919,-2.18402, 2.01191};
+//     vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
+//     x_test.push_back(first_vec);
+//
+//     double second_arr[] = {1.25728, 1.13107, -1.13107, 0.182227, 0.691963, -0.175838, 3.41511, -5.99775, -0.846054};
+//     vector<double> second_vec (second_arr, second_arr + sizeof(second_arr) / sizeof(double));
+//     x_test.push_back(second_vec);
+//
+//     double third_arr[] = {0.246902, -2.09713, 2.09713, -0.69256, 0.14331, 0.604811, -4.66946, 0.895696, -0.0151988};
+//     vector<double> third_vec (third_arr, third_arr + sizeof(third_arr) / sizeof(double));
+//     x_test.push_back(third_vec);
+//
+//     double fourth_arr[] = {-2.12687, 2.12687, -0.192541, 0.511687, -0.07551, 0.902735, 1.32739, -1.57741, 3.24697};
+//     vector<double> fourth_vec (fourth_arr, fourth_arr + sizeof(fourth_arr) / sizeof(double));
+//     x_test.push_back(fourth_vec);
+//
+//     double fifth_arr[] = {-0.235922, -0.235922, 1.55789, 0.384338, -0.43193, 0.553732, 2.83865, -2.01604, -2.1784};
+//     vector<double> fifth_vec (fifth_arr, fifth_arr + sizeof(fifth_arr) / sizeof(double));
+//     x_test.push_back(fifth_vec);
+//
+//     for (int k = 0; k < 5; k++)
+//     {
+//         vec_t in;
+//         double* test_pr = &x_test[k].front();
+//         in.assign(test_pr, test_pr + x_test[k].size());
+//
+//         vec_t result = net.predict(in);
+//         for (int i = 0; i < result.size(); i++) {
+//             cout<<result[i]<<' ';
+//         }
+//         cout<<' '<<endl;
+//     }
 
     // cout<<"Debugging!"<<endl;
     // cout<<' '<<endl;

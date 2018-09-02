@@ -65,8 +65,8 @@ public:
             c1net.load("rect_c1_unsym");
             c2net.load("rect_c2_unsym");
             c3net.load("rect_c3_unsym");
-            r1net.load("rect_r1_unsym");
-            r2net.load("rect_r2_unsym");
+//            r1net.load("rect_r1_unsym");
+//            r2net.load("rect_r2_unsym");
             r3net.load("rect_r3_unsym");
         } 
         else
@@ -74,8 +74,8 @@ public:
             c1net.load("rect_c1_sym");
             c2net.load("rect_c2_sym");
             c3net.load("rect_c3_sym");
-            r1net.load("rect_r1_sym");
-            r2net.load("rect_r2_sym");  
+//            r1net.load("rect_r1_sym");
+//            r2net.load("rect_r2_sym");  
             r3net.load("rect_r3_sym");       
         }
         
@@ -129,7 +129,6 @@ public:
         pos = hand_bd->getSkeleton()->getPositions();
         vel_uncons = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
 
-        //BOBTODO: Change Neural net input!!
         Eigen::VectorXd in_vec = Eigen::VectorXd::Zero(9);
         in_vec << pos[0], pos[1], pos[2],
                   vel_uncons[0], vel_uncons[1], vel_uncons[2],
@@ -195,7 +194,7 @@ public:
     {
         if (in_vec[3]<=20 && in_vec[3]>=-20 && in_vec[4]<=20 && in_vec[4]>=-20 && in_vec[5]<=20 && in_vec[5]>=-20) //angular
         {
-            if (in_vec[6]<=2 && in_vec[6]>=-2 && in_vec[7]<=13 && in_vec[7]>=-13 && in_vec[8]<=2 && in_vec[8]>=-2) // linear
+            if (in_vec[6]<=5 && in_vec[6]>=-5 && in_vec[7]<=13 && in_vec[7]>=-13 && in_vec[8]<=5 && in_vec[8]>=-5) // linear
             {
                 return true;
             }
@@ -264,42 +263,42 @@ public:
                 }
                 else if (c1output == 0)
                 {
-                    // run regreesor
-                    // auto pos = result.getContact(0).point;
-                    // //auto pos2 = result.getContact(1).point;
+//                     // run regreesor
+//                     auto pos = result.getContact(0).point;
+//
+//                     Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
+//                     in_r = in_vec;
+//                     in_r[3] = in_r[3] / 20.0;
+//                     in_r[4] = in_r[4] / 20.0;
+//                     in_r[5] = in_r[5] / 20.0;
+//
+//                     vec_t input_r;
+//                     input_r.assign(in_r.data(), in_r.data()+9);
+//
+//                     vec_t r1output = r1net.predict(input_r);
                     
-                    // Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
-                    // in_r = in_vec;
-                    // in_r[3] = in_r[3] / 20.0;
-                    // in_r[4] = in_r[4] / 20.0;
-                    // in_r[5] = in_r[5] / 20.0;
-                    
-                    // vec_t input_r;
-                    // input_r.assign(in_r.data(), in_r.data()+9);
-                    
-                    // vec_t r1output = r1net.predict(input_r);
-                    // // * 100 to match the /100 during regression training
-                    // double fx = r1output[0] * 100.0 / delTime;
-                    // double fz = r1output[1] * 100.0 / delTime;
-                    // Eigen::Vector3d friction;
-                    // friction << fx, 0.0, fz;
-                    
-                    // // decouple instead of blindly run one step
-                    // // applying the impulse. Need modificaiton!
-                    // hand_bd -> clearExternalForces();
-                    // mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-                    // hand_bd -> addExtForce(friction, pos, false, false);
-                    // hand_bd->getSkeleton()->computeForwardDynamics();
-                    // hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
-                    
-                    // hand_bd -> setFrictionCoeff(0.0);
-                    // ground_bd -> setFrictionCoeff(0.0);
-                    mWorld->getConstraintSolver()->solve();
-
-                    // // restore
-                    // hand_bd -> setFrictionCoeff(1.0);
-                    // ground_bd ->setFrictionCoeff(1.0);
-                    // mWorld->setGravity(gravity);
+//                     double fx = r1output[0] * 100.0;
+//                     double fz = r1output[1] * 100.0;
+//                     Eigen::Vector3d friction;
+//                     friction << fx, 0.0, fz;
+//
+//                     hand_bd -> clearExternalForces();
+//                     hand_bd -> clearConstraintImpulse();
+//                     mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+//                     hand_bd -> addExtForce(friction, pos, false, true);
+//
+//                     hand_bd -> addConstraintImpulse(bNode->getAspectState().mFext * mWorld->getTimeStep());
+//                     hand_bd -> clearExternalForces();
+//                     hand_bd->getSkeleton()->computeImpulseForwardDynamics();
+//
+//                     hand_bd -> setFrictionCoeff(0.0);
+//                     ground_bd -> setFrictionCoeff(0.0);
+                     mWorld->getConstraintSolver()->solve();
+//
+//                     // restore
+//                     hand_bd -> setFrictionCoeff(1.0);
+//                     ground_bd ->setFrictionCoeff(1.0);
+//                     mWorld->setGravity(gravity);
                 }
                 else // c1out == 2
                 {
@@ -350,46 +349,51 @@ public:
                 }
                 else if (c2output == 0)
                 {
-                    // run regreesor
-//                     auto pos1 = result.getContact(0).point;
-//                     auto pos2 = result.getContact(1).point;
+//                    // run regreesor
+//                    auto pos1 = result.getContact(0).point;
+//                    auto pos2 = result.getContact(1).point;
+//                    PrePos = hand_bd->getSkeleton()->getPositions();
                     
-//                     Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
-//                     in_r = in_vec;
-//                     in_r[3] = in_r[3] / 20.0;
-//                     in_r[4] = in_r[4] / 20.0;
-//                     in_r[5] = in_r[5] / 20.0;
+//                    Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
+//                    in_r = in_vec;
+//                    in_r[3] = in_r[3] / 20.0;
+//                    in_r[4] = in_r[4] / 20.0;
+//                    in_r[5] = in_r[5] / 20.0;
+//
+//                    vec_t input_r;
+//                    input_r.assign(in_r.data(), in_r.data()+9);
+//
+//                    vec_t r3output = r3net.predict(input_r);
                     
-//                     vec_t input_r;
-//                     input_r.assign(in_r.data(), in_r.data()+9);
-                    
-//                     vec_t r2output = r2net.predict(input_r);
-//                     // scaled down 100 times when training
-//                     double fx = r2output[0] * 100.0 /delTime;
-//                     double fz = r2output[1] * 100.0 /delTime;
-//                     double ty = r2output[2] * 100.0 /delTime;
-// //                    std::cout << fric << std::endl;
-//                     Eigen::Vector3d friction;
-//                     friction << fx, 0.0, fz;
-
-//                     Eigen::Vector3d torque;
-//                     torque << 0.0, ty, 0.0;
-//                     // decouple instead of blindly run one step
-//                     hand_bd -> clearExternalForces();
-//                     mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-//                     // middle of the point
-//                     hand_bd -> addExtForce(friction, (pos1+pos2)/2, false, false);
-//                     hand_bd -> addExtTorque(torque, false);
-//                     hand_bd->getSkeleton()->computeForwardDynamics();
-//                     hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
-                    
-//                     hand_bd -> setFrictionCoeff(0.0);
-//                     ground_bd -> setFrictionCoeff(0.0);
-                     mWorld->getConstraintSolver()->solve();
-
-//                     hand_bd -> setFrictionCoeff(1.0);
-//                     ground_bd ->setFrictionCoeff(1.0);
-//                     mWorld->setGravity(gravity);
+//                    double fx = r3output[0] * 100.0;
+//                    double fz = r3output[1] * 100.0;
+//                    double ty = r3output[2] * 100.0;
+//
+//                    Eigen::Vector3d friction;
+//                    friction << fx, 0.0, fz;
+//                    Eigen::Vector3d torque;
+//                    torque <<  -PrePos[4]*friction[2], ty, PrePos[4]*friction[0];
+//
+//                    // decouple instead of blindly run one step
+//                    hand_bd -> clearExternalForces();
+//                    hand_bd -> clearConstraintImpulse();
+//
+//                    mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+//                    hand_bd -> addExtForce(friction, Eigen::Vector3d::Zero(), false, true);
+//                    hand_bd -> addExtTorque(torque, false);
+//
+//                    hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
+//                    hand_bd -> clearExternalForces();
+//                    hand_bd->getSkeleton()->computeImpulseForwardDynamics();
+//
+//                    hand_bd -> setFrictionCoeff(0.0);
+//                    ground_bd -> setFrictionCoeff(0.0);
+                    mWorld->getConstraintSolver()->solve();
+//
+//                    // restore
+//                    hand_bd -> setFrictionCoeff(1.0);
+//                    ground_bd ->setFrictionCoeff(1.0);
+//                    mWorld->setGravity(gravity);
                 }
                 else // c2out == 2
                 {
@@ -409,19 +413,12 @@ public:
         else if (result.getNumContacts() == 4) // surface contact
         {
             bool vel_check = checkVelocityRange(in_vec);
-            //if (vel_check == true)
-            if(true)
+            if (vel_check == true)
             {
                 //cout<<"c3 output is: "<<c3output<<endl;
                 if (c3output == 1)
                 {
-                    auto pos1 = result.getContact(0).point;
-                    auto pos2 = result.getContact(1).point;
-                    auto pos3 = result.getContact(2).point;
-                    auto pos4 = result.getContact(3).point;
-
                     auto w_cstr = std::make_shared<dart::constraint::WeldJointConstraint>(hand_bd, ground_bd);
-
                     mWorld->getConstraintSolver()->addConstraint(w_cstr);
                     
                     // disable ground from contact detection
@@ -435,54 +432,45 @@ public:
                 }
                 else if (c3output == 0)
                 {
-                    Eigen::Vector6d old_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
-                    cout<<"Old velocities are: "<<old_vel.transpose()<<endl;
-                    // run regreesor
-                    auto pos1 = result.getContact(0).point;
-                    auto pos2 = result.getContact(1).point;
-                    auto pos3 = result.getContact(2).point;
-                    auto pos4 = result.getContact(3).point;
-                    
+                    //Eigen::Vector6d old_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
+                    //cout<<"Old velocities are: "<<old_vel.transpose()<<endl;
+                    PrePos = hand_bd->getSkeleton()->getPositions();
                     Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
                     in_r = in_vec;
                     in_r[3] = in_r[3] / 20.0;
                     in_r[4] = in_r[4] / 20.0;
                     in_r[5] = in_r[5] / 20.0;
-                    
+
                     vec_t input_r;
                     input_r.assign(in_r.data(), in_r.data()+9);
-                    
+
                     vec_t r3output = r3net.predict(input_r);
                     // scaled down 100 times when training
                     double fx = r3output[0] * 100.0;// /delTime;
                     double fz = r3output[1] * 100.0;// /delTime;
                     double ty = r3output[2] * 100.0;// /delTime;
 
-                    double tempX = 19.406 /delTime;
-                    double tempZ = -242.082 /delTime;
-                    double tempTY = -4.09366 /delTime;
-
                     Eigen::Vector3d friction;
                     friction << fx, 0.0, fz;
-                    //friction << tempX, 0.0, tempZ;
                     Eigen::Vector3d torque;
-                    torque << 0.0, ty, 0.0;
-                    //torque << 0.0, tempTY, 0.0;
+                    torque <<  -PrePos[4]*friction[2], ty, PrePos[4]*friction[0];
+                    
                     // decouple instead of blindly run one step
                     hand_bd -> clearExternalForces();
-                    mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-                    // middle of the point
-                    hand_bd -> addExtForce(friction, (pos1+pos2+pos3+pos4)/4, false, false);
-                    hand_bd -> addExtTorque(torque, false);
-                    hand_bd->getSkeleton()->computeForwardDynamics();
-                    hand_bd->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
+                    hand_bd -> clearConstraintImpulse();
                     
+                    mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+                    hand_bd -> addExtForce(friction, Eigen::Vector3d::Zero(), false, true);
+                    hand_bd -> addExtTorque(torque, false);
+                    
+                    hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
+                    hand_bd -> clearExternalForces();
+                    hand_bd->getSkeleton()->computeImpulseForwardDynamics();
+
                     hand_bd -> setFrictionCoeff(0.0);
                     ground_bd -> setFrictionCoeff(0.0);
                     mWorld->getConstraintSolver()->solve();
                     
-                    Eigen::Vector6d new_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
-                    cout<<"New velocities are: "<<new_vel.transpose()<<endl;
                     // restore
                     hand_bd -> setFrictionCoeff(1.0);
                     ground_bd ->setFrictionCoeff(1.0);
@@ -514,6 +502,7 @@ public:
     
     Eigen::Vector6d vel_uncons;
     Eigen::Vector6d pos;
+    Eigen::Vector6d PrePos;
     network<sequential> c1net;
     network<sequential> c2net;
     network<sequential> c3net;
@@ -557,5 +546,6 @@ int main(int argc, char* argv[])
     
     glutInit(&argc, argv);
     window.initWindow(640, 480, "Simple Test");
+    
     glutMainLoop();
 }

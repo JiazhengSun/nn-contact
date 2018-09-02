@@ -16,7 +16,7 @@ save_model_path = "/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/k
 x_temp = []
 y_temp = []
 list_size = 0
-with open('/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/train_data/3D/rect_c2_3D_sym.csv') as csvfile:
+with open('/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/train_data/3D/rect_c3_3D_sym.csv') as csvfile:
 	raw_data = csv.reader(csvfile, delimiter='\n')
 
 	shuffle_list = []
@@ -99,5 +99,5 @@ plt.show()
 # print(score)
 # print(model.predict(x_test, batch_size=100))
 
-save_name = 'rect_c2_3D_sym.h5'
+save_name = 'rect_c3_3D_sym.h5'
 model.save(os.path.join(save_model_path, save_name))

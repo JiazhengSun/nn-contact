@@ -77,17 +77,21 @@ public:
         // Bob's trail
         if (UNSYMCONE)
         {
-            c1net.load("rect_c1_unsym");
-            c2net.load("rect_c2_unsym");
-            r1net.load("rect_r1_unsym");
-            r2net.load("rect_r2_unsym");
-        } 
+            c1net.load("rect_c2_unsym");
+            c2net.load("rect_c3_unsym");
+//            r1net.load("rect_r1_unsym");
+//            r2net.load("rect_r2_unsym");
+             r1net.load(DART_DATA_PATH"/NN-contact-force/neuralnets/net-r1-unsym-feb26");
+             r2net.load(DART_DATA_PATH"/NN-contact-force/neuralnets/net-r2-unsym-feb26");
+        }
         else
         {
-            c1net.load("rect_c1_sym");
-            c2net.load("rect_c2_sym");
-            r1net.load("rect_r1_sym");
-            r2net.load("rect_r2_sym");         
+            c1net.load("rect_c2_sym");
+            c2net.load("rect_c3_sym");
+//            r1net.load("rect_r1_sym");
+//            r2net.load("rect_r2_sym");
+             r1net.load(DART_DATA_PATH"/NN-contact-force/neuralnets/net-r1-feb26");
+             r2net.load(DART_DATA_PATH"/NN-contact-force/neuralnets/net-r2-feb25");
         }
         
         hand_bd = mWorld->getSkeleton("hand skeleton")->getBodyNode(0);

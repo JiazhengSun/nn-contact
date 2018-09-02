@@ -84,38 +84,18 @@ public:
     void timeStepping() override
     {
         Eigen::Vector6d pos;
-        double h = 1.0;
-        pos << 0,0,0, 0,h,0;
+        pos <<0,0,0,0,0.0499999,0;
         mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
         mWorld->getSkeleton("hopper")->getJoint(0)->setVelocities(Eigen::Vector6d::Zero());
         
-        Eigen::MatrixXd vts(3,8);
-        vts << 0.1, 0.1, -0.1, -0.1, 0.1, 0.1, -0.1, -0.1,
-               0.05, 0.05, 0.05, 0.05, -0.05, -0.05, -0.05, -0.05, 
-               0.1, -0.1, 0.1, -0.1, 0.1, -0.1, 0.1, -0.1;
-
-        double miny = 999;
-        for (int i = 0; i < 8; i++) {
-            Eigen::Vector3d vt = vts.col(i);
-            Eigen::Vector3d offset(0,0,0);
-            auto vt_pos = bNode->getWorldTransform()*(vt + offset);
-            if (vt_pos[1]<miny) {
-                miny = vt_pos[1];
-            }
-        }
-
-        pos << 0,0,0, 0,h-(1e-7)-miny,0;
-        mWorld->getSkeleton("hopper")->getJoint(0)->setPositions(pos);
-        
-        
         Eigen::Vector6d vel = Eigen::Vector6d::Zero();
-        vel[0] = 7.15459;
-        vel[1] = 7.17186;
-        vel[2] = 17.3877;
+        vel[0] = -17.8615; //wx
+        vel[1] = 1.18801; //wy
+        vel[2] = 6.84598; //wz
 
-        vel[3] = -0.465992; //x vel
-        vel[4] = 0.504826; //y vel
-        vel[5] = 1.32386; //z vel
+        vel[3] = -4.92302; //x vel
+        vel[4] = -3.03119; //y vel
+        vel[5] = -4.33158; //z vel
         
         
         // Create reference frames for setting the initial velocity
@@ -130,11 +110,8 @@ public:
         ref.setRelativeTransform(bNode->getTransform(&center));
         bNode->getSkeleton()->getJoint(0)->setVelocities(ref.getSpatialVelocity());
         
-        //            std::cout << "vel_set:" << bNode->getSpatialVelocity(Frame::World(),Frame::World()).transpose() << std::endl;
-        
         VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
         PosIn = bNode->getSkeleton()->getPositions();
-        auto oldAng = bNode->getAngularMomentum();
         
         // check collision
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
@@ -144,41 +121,51 @@ public:
         bool collision = collisionGroup->collide(option, &result);
 
         if (collision && result.getNumContacts() == 4)
-        {	
-        	double delTime = mWorld->getTimeStep();
-            // Standard LCP
-            // mWorld->getConstraintSolver()->solve();
-
+        {
+            cout<<"pre-contact velocity is: "<<bNode->getSpatialVelocity(Frame::World(),Frame::World()).transpose()<<endl;
             // Replace it with our own testing solving
-            auto pos1 = result.getContact(0).point;
-            auto pos2 = result.getContact(1).point;
-            auto pos3 = result.getContact(2).point;
-            auto pos4 = result.getContact(3).point;
-            // Impulse/time => Force
-            double tempX = 2.53485;
-            double tempZ = -181.461;
-            double tempTY = -21.1335;
-
+            
+            double fx = 1515.57;
+            double fz = 1515.57;
+            double ty = -22.9489;
+            
             Eigen::Vector3d friction;
-            friction << tempX, 0.0, tempZ;
+            friction << fx, 0.0, fz;
+            cout<<"Posiiton is: "<<PosIn.transpose()<<endl;
             Eigen::Vector3d torque;
-            torque << 0.0, tempTY, 0.0;
-
-	        bNode -> clearExternalForces();
-	        mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-	        // middle of the point
-	        bNode -> addExtForce(friction, (pos1+pos2+pos3+pos4)/4, false, false);
-	        bNode -> addExtTorque(torque, false);
-	        bNode->getSkeleton()->computeForwardDynamics();
-	        bNode->getSkeleton()->integrateVelocities(mWorld->getTimeStep());
-	        
-	        bNode -> setFrictionCoeff(0.0);
-	        mWorld->getSkeleton("ground skeleton")->getBodyNode(0) -> setFrictionCoeff(0.0);
-	        mWorld->getConstraintSolver()->solve();
-
+            torque <<  -PosIn[4]*fz, ty, PosIn[4]*fx;
+            
+            bNode -> clearExternalForces();
+            bNode -> clearConstraintImpulse();
+            
+            mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+            bNode -> addExtForce(friction, Eigen::Vector3d::Zero(), false, true);
+            bNode -> addExtTorque(torque, false);
+            
+            bNode -> addConstraintImpulse(bNode->getAspectState().mFext * mWorld->getTimeStep());
+            bNode -> clearExternalForces();
+            bNode->getSkeleton()->computeImpulseForwardDynamics();
+            
+            bNode -> setFrictionCoeff(0.0);
+            mWorld->getSkeleton("ground skeleton")->getBodyNode(0) -> setFrictionCoeff(0.0);
+            mWorld->getConstraintSolver()->solve();
+            //
+            // Forward dynamics after solving LCP
+            for (size_t i=0; i < mWorld->getNumSkeletons(); i++)
+            {
+                auto skel = mWorld->getSkeleton(i);
+                if (!skel->isMobile())
+                    continue;
+            
+                if (skel->isImpulseApplied())
+                {
+                    skel->computeImpulseForwardDynamics();
+                    skel->setImpulseApplied(false);
+                }
+            }
+            
 	        Eigen::Vector6d new_vel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
             cout<<"New velocities are: "<<new_vel.transpose()<<endl;
-            
         }
         else
         {

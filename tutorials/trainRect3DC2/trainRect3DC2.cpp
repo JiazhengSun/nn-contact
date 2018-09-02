@@ -181,9 +181,9 @@ public:
         vel[1] = dart::math::random(-20,20);
         vel[2] = dart::math::random(-20,20);
 
-        vel[3] = dart::math::random(-2,2); //x vel
+        vel[3] = dart::math::random(-5,5); //x vel
         vel[4] = dart::math::random(-13,13); //y vel
-        vel[5] = dart::math::random(-2,2); //z vel
+        vel[5] = dart::math::random(-5,5); //z vel
         
         
         // cosYeate reference frames for setting the initial velocity
@@ -321,7 +321,7 @@ public:
         Eigen::Vector6d InOut_2 = Eigen::Vector6d::Zero();
         InOut_1 << PosIn[0], PosIn[1],PosIn[2]; //theta_z
         InOut_2 <<
-                VelIn[0]/10.0, VelIn[1]/10.0,VelIn[2]/10.0, //angular vels
+                VelIn[0]/20.0, VelIn[1]/20.0,VelIn[2]/20.0, //angular vels
                 VelIn[3], VelIn[4], VelIn[5]; //linear vels
         //cout<<"Here is the result after transpose"<<endl;
         //std::cout << InOut_1.transpose() << std::endl;

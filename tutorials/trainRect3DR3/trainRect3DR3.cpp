@@ -37,8 +37,8 @@
 #include <iostream>
 #include <fstream>
 
-//#define NUMSAM 500000
-#define NUMSAM 50
+#define NUMSAM 500000
+//#define NUMSAM 50
 #define UNSYMCONE false
 
 using namespace dart::dynamics;
@@ -164,9 +164,9 @@ public:
         vel[1] = dart::math::random(-20,20);
         vel[2] = dart::math::random(-20,20);
 
-        vel[3] = dart::math::random(-2,2); //x vel
+        vel[3] = dart::math::random(-5,5); //x vel
         vel[4] = dart::math::random(-13,13); //y vel
-        vel[5] = dart::math::random(-2,2); //z vel
+        vel[5] = dart::math::random(-5,5); //z vel
         
         
         // Create reference frames for setting the initial velocity
@@ -185,9 +185,7 @@ public:
         
         VelIn = bNode->getSpatialVelocity(Frame::World(),Frame::World());
         PosIn = bNode->getSkeleton()->getPositions();
-        // Get old angular momentum
-        auto oldAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
-        
+        Eigen::Vector3d oldAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
         // check collision
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
         auto collisionGroup = mWorld->getConstraintSolver()->getCollisionGroup();
@@ -272,26 +270,12 @@ public:
                     }
                     else
                     {
-                        // non-sticking
-                        // Eigen::Vector3d oldVel = Eigen::Vector3d(VelIn[3], VelIn[4], VelIn[5]);
-                        // Eigen::Vector3d newVel = bNode->getCOMLinearVelocity(Frame::World(),Frame::World());
-                        // Eigen::Vector3d newAng = bNode->getAngularMomentum();
-
-                        // double m = bNode->getMass();
-                        // double h = mWorld->getTimeStep();
-
-                        // Eigen::Vector3d l_imp = m * (newVel - oldVel); // linear_impulse = m * del_v
-                        // Eigen::Vector3d ptheta = newAng - oldAng; // angular_impulse = del_angMomentum
-                        // Eigen::Vector3d l_fric = ptheta/h; // linear friction = impulse / del_t
-
-                        Eigen::Vector3d newVel = bNode->getCOMLinearVelocity(Frame::World(),Frame::World());
-                        Eigen::Vector3d newAng = bNode->getWorldTransform().linear() * bNode->getAngularMomentum();
-                        auto px = newVel[0] - VelIn[3]; // linear impulse in one time step
-                        auto pz = newVel[2] - VelIn[5];
-                        auto ptheta_y = newAng[1] - oldAng[1]; // Impulse = delMomentum. Momentum = I*w, 
-                        storeOneForceInFile(px, pz, ptheta_y);
-
-                        //storeOneForceInFile(px, pz, ptheta_y);
+                        NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
+                        Eigen::Vector3d newAng = bNode->getWorldTransform().linear()* bNode->getAngularMomentum();
+                        auto fx = (NewVel[3] - VelIn[3])/mWorld->getTimeStep(); // linear impulse in one time step
+                        auto fz = (NewVel[5] - VelIn[5])/mWorld->getTimeStep();
+                        auto t_y = (newAng[1] - oldAng[1])/mWorld->getTimeStep(); // Impulse = delMomentum. Momentum = I*w,
+                        storeOneForceInFile(fx, fz, t_y);
 
                     }
                 }
@@ -307,13 +291,13 @@ public:
         ts++;
     }
     
-    void storeOneForceInFile(double px, double pz, double ptheta_y)
+    void storeOneForceInFile(double fx, double fz, double t_y)
     {
         if (sampleCount < NUMSAM)
         {
-            //cout<<sampleCount<<endl;
+            cout<<sampleCount<<endl;
             NewVel = bNode->getSpatialVelocity(Frame::World(),Frame::World());
-            cout<<"New velocity is: "<<NewVel.transpose()<<endl;
+            //cout<<"New velocity is: "<<NewVel.transpose()<<endl;
             
             Eigen::Vector3d InOut_1 = Eigen::Vector3d::Zero();
             Eigen::Vector6d InOut_2 = Eigen::Vector6d::Zero();
@@ -322,7 +306,7 @@ public:
             InOut_2 <<
                     VelIn[0]/20.0, VelIn[1]/20.0,VelIn[2]/20.0, //angular vels
                     VelIn[3], VelIn[4], VelIn[5]; //linear vels
-            Result << px, pz, ptheta_y;
+            Result << fx, fz, t_y;
             //cout<<"Here is the result after transpose"<<endl;
             //std::cout << InOut_1.transpose() << std::endl;
             //std::cout << InOut_2.transpose() << std::endl;
@@ -385,13 +369,13 @@ int main(int argc, char* argv[])
     
     MyWindow window(world);
 
-    // while(1){
-    //     window.timeStepping();
-    // }
+    while(1){
+        window.timeStepping();
+    }
     
-    std::cout << "space bar: simulation on/off" << std::endl;
+    // std::cout << "space bar: simulation on/off" << std::endl;
     
-    glutInit(&argc, argv);
-    window.initWindow(640, 480, "Simple Test");
-    glutMainLoop();
+    // glutInit(&argc, argv);
+    // window.initWindow(640, 480, "Simple Test");
+    // glutMainLoop();
 }
