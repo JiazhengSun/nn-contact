@@ -35,7 +35,6 @@
 #include "dart/collision/ode/ode.hpp"
 #include <dart/utils/utils.hpp>
 #include <math.h>
-
 #include "tiny_dnn/tiny_dnn.h"
 
 using namespace dart::dynamics;
@@ -67,16 +66,16 @@ public:
             c3net.load("rect_c3_unsym");
 //            r1net.load("rect_r1_unsym");
 //            r2net.load("rect_r2_unsym");
-            r3net.load("rect_r3_unsym");
-        } 
+//            r3net.load("rect_r3_unsym");
+        }
         else
         {
             c1net.load("rect_c1_sym");
             c2net.load("rect_c2_sym");
             c3net.load("rect_c3_sym");
 //            r1net.load("rect_r1_sym");
-//            r2net.load("rect_r2_sym");  
-            r3net.load("rect_r3_sym");       
+//            r2net.load("rect_r2_sym");
+//            r3net.load("rect_r3_sym");
         }
         
         hand_bd = mWorld->getSkeleton("hand skeleton")->getBodyNode(0);
@@ -109,10 +108,12 @@ public:
     void timeStepping() override
     // substituting original DART contact solve with ours, keeping other steps in world->step() unchanged.
     {
+        auto Pi = dart::math::constants<double>::pi();
         if (ts != 0)
         {
             auto a = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
             theta_odo = theta_odo + a[2] * mWorld->getTimeStep();
+            cout<<"degree of rotations is: "<<theta_odo * 180 / Pi<<endl;
         }
         
         // Integrate velocity for unconstrained skeletons
@@ -133,6 +134,10 @@ public:
         in_vec << pos[0], pos[1], pos[2],
                   vel_uncons[0], vel_uncons[1], vel_uncons[2],
                   vel_uncons[3], vel_uncons[4], vel_uncons[5];
+        //cout<<"Pos_x is: "<<pos[3]<<endl;
+        //cout<<"Pos_z is: "<<pos[5]<<endl;
+        double dist = sqrt(pow(pos[3],2) + pow(pos[5],2));
+        cout<<"Total distance is: "<<pos[3]<<endl;
         
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
         auto collisionGroup = mWorld->getConstraintSolver()->getCollisionGroup();
@@ -232,7 +237,7 @@ public:
         //     cout<<"c2output is: "<<c3output<<endl;
         // }
 
-        cout<<"Number of contacts are: "<<result.getNumContacts()<<endl;
+        //cout<<"Number of contacts are: "<<result.getNumContacts()<<endl;
 
         
         if (result.getNumContacts() == 1) // Point contact case
@@ -432,49 +437,49 @@ public:
                 }
                 else if (c3output == 0)
                 {
-                    //Eigen::Vector6d old_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
-                    //cout<<"Old velocities are: "<<old_vel.transpose()<<endl;
-                    PrePos = hand_bd->getSkeleton()->getPositions();
-                    Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
-                    in_r = in_vec;
-                    in_r[3] = in_r[3] / 20.0;
-                    in_r[4] = in_r[4] / 20.0;
-                    in_r[5] = in_r[5] / 20.0;
-
-                    vec_t input_r;
-                    input_r.assign(in_r.data(), in_r.data()+9);
-
-                    vec_t r3output = r3net.predict(input_r);
-                    // scaled down 100 times when training
-                    double fx = r3output[0] * 100.0;// /delTime;
-                    double fz = r3output[1] * 100.0;// /delTime;
-                    double ty = r3output[2] * 100.0;// /delTime;
-
-                    Eigen::Vector3d friction;
-                    friction << fx, 0.0, fz;
-                    Eigen::Vector3d torque;
-                    torque <<  -PrePos[4]*friction[2], ty, PrePos[4]*friction[0];
-                    
-                    // decouple instead of blindly run one step
-                    hand_bd -> clearExternalForces();
-                    hand_bd -> clearConstraintImpulse();
-                    
-                    mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
-                    hand_bd -> addExtForce(friction, Eigen::Vector3d::Zero(), false, true);
-                    hand_bd -> addExtTorque(torque, false);
-                    
-                    hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
-                    hand_bd -> clearExternalForces();
-                    hand_bd->getSkeleton()->computeImpulseForwardDynamics();
-
-                    hand_bd -> setFrictionCoeff(0.0);
-                    ground_bd -> setFrictionCoeff(0.0);
+//                    //Eigen::Vector6d old_vel = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
+//                    //cout<<"Old velocities are: "<<old_vel.transpose()<<endl;
+//                    PrePos = hand_bd->getSkeleton()->getPositions();
+//                    Eigen::VectorXd in_r = Eigen::VectorXd::Zero(9);
+//                    in_r = in_vec;
+//                    in_r[3] = in_r[3] / 20.0;
+//                    in_r[4] = in_r[4] / 20.0;
+//                    in_r[5] = in_r[5] / 20.0;
+//
+//                    vec_t input_r;
+//                    input_r.assign(in_r.data(), in_r.data()+9);
+//
+//                    vec_t r3output = r3net.predict(input_r);
+//                    // scaled down 100 times when training
+//                    double fx = r3output[0] * 100.0;// /delTime;
+//                    double fz = r3output[1] * 100.0;// /delTime;
+//                    double ty = r3output[2] * 100.0;// /delTime;
+//
+//                    Eigen::Vector3d friction;
+//                    friction << fx, 0.0, fz;
+//                    Eigen::Vector3d torque;
+//                    torque <<  -PrePos[4]*friction[2], ty, PrePos[4]*friction[0];
+//
+//                    // decouple instead of blindly run one step
+//                    hand_bd -> clearExternalForces();
+//                    hand_bd -> clearConstraintImpulse();
+//
+//                    mWorld->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
+//                    hand_bd -> addExtForce(friction, Eigen::Vector3d::Zero(), false, true);
+//                    hand_bd -> addExtTorque(torque, false);
+//
+//                    hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
+//                    hand_bd -> clearExternalForces();
+//                    hand_bd->getSkeleton()->computeImpulseForwardDynamics();
+//
+//                    hand_bd -> setFrictionCoeff(0.0);
+//                    ground_bd -> setFrictionCoeff(0.0);
                     mWorld->getConstraintSolver()->solve();
-                    
-                    // restore
-                    hand_bd -> setFrictionCoeff(1.0);
-                    ground_bd ->setFrictionCoeff(1.0);
-                    mWorld->setGravity(gravity);
+//
+//                    // restore
+//                    hand_bd -> setFrictionCoeff(1.0);
+//                    ground_bd ->setFrictionCoeff(1.0);
+//                    mWorld->setGravity(gravity);
                 }
                 else // c3output = 2
                 {
@@ -524,16 +529,24 @@ int main(int argc, char* argv[])
     WorldPtr world = SkelParser::readWorld(DART_DATA_PATH"/NN-contact-force/skel/singleBody_test.skel");
     assert(world != nullptr);
     
-    std::cout << "please input dtheta_x0, dtheta_y0, dtheta_z0 and dx_0, dy_0, dz_0:" << std::endl;
-    double x0, y0, z0, theta_x, theta_y, theta_z;
-    std::cin >> theta_x >> theta_y >> theta_z >> x0 >> y0 >> z0;
+//    std::cout << "please input dtheta_x, dtheta_y, dtheta_z0 and dx, dy, dz:" << std::endl;
+    double dx, dy, dz, dtheta_x, dtheta_y, dtheta_z;
+//    std::cin >> dtheta_x >> dtheta_y >> dtheta_z >> dx >> dy >> dz;
+    dy = 0.0; dz= 0.0; dtheta_x = 0.0; dtheta_y = 0.0;
+    cout<<"Input dx and dtheta_z"<<endl;
+    cin>>dx>>dtheta_z;
+    
+//    double pos_x, pos_y, pos_z, pos_ax, pos_ay, pos_az;
+//    pos_x = 0.0; pos_z = 0.0; pos_ax = 0.0; pos_ay = 0.0;
+//    cout<<"Input pos_y and pos_az"<<endl;
+//    cin>>pos_y>>pos_az;
     
     // Create reference frames for setting the initial velocity
     Eigen::Isometry3d centerTf(Eigen::Isometry3d::Identity());
     centerTf.translation() = world->getSkeleton("hand skeleton")->getCOM();
     SimpleFrame center(Frame::World(), "center", centerTf);
-    Eigen::Vector3d v = Eigen::Vector3d(x0, y0, z0);
-    Eigen::Vector3d w = Eigen::Vector3d(theta_x, theta_y, theta_z);
+    Eigen::Vector3d v = Eigen::Vector3d(dx, dy, dz);
+    Eigen::Vector3d w = Eigen::Vector3d(dtheta_x, dtheta_y, dtheta_z);
     center.setClassicDerivatives(v, w);
     SimpleFrame ref(&center, "root_reference");
     // ?

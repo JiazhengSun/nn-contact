@@ -67,7 +67,7 @@
             <joint type="free" name="j_hand">
                 <parent>world</parent>
                 <child>h_hand</child>
-                <init_pos>0 0 2.8 0 0.3 0</init_pos>
+                <init_pos>0 0   0.5   0  0.4   0</init_pos>
                 <init_vel>0 0 0 0 0 0</init_vel>
             </joint>
         </skeleton>	
