@@ -84,7 +84,9 @@ public:
         gravity = mWorld->getGravity();
         
         // odometry to record the total rotation travelled
-        theta_odo = mWorld->getSkeleton("hand skeleton")->getPosition(2);
+        theta_odox = mWorld->getSkeleton("hand skeleton")->getPosition(0);
+        theta_odoy = mWorld->getSkeleton("hand skeleton")->getPosition(1);
+        theta_odoz = mWorld->getSkeleton("hand skeleton")->getPosition(2);
     }
     
     void keyboard(unsigned char key, int x, int y) override
@@ -112,8 +114,12 @@ public:
         if (ts != 0)
         {
             auto a = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
-            theta_odo = theta_odo + a[2] * mWorld->getTimeStep();
-            cout<<"degree of rotations is: "<<theta_odo * 180 / Pi<<endl;
+            theta_odox = theta_odox + a[0] * mWorld->getTimeStep();
+            theta_odoy = theta_odoy + a[1] * mWorld->getTimeStep();
+            theta_odoz = theta_odoz + a[2] * mWorld->getTimeStep();
+            cout<<"degree of X rotations is: "<<theta_odox * 180 / Pi<<endl;
+            cout<<"degree of Y rotations is: "<<theta_odoy * 180 / Pi<<endl;
+            cout<<"degree of Z rotations is: "<<theta_odoz * 180 / Pi<<endl;
         }
         
         // Integrate velocity for unconstrained skeletons
@@ -134,10 +140,11 @@ public:
         in_vec << pos[0], pos[1], pos[2],
                   vel_uncons[0], vel_uncons[1], vel_uncons[2],
                   vel_uncons[3], vel_uncons[4], vel_uncons[5];
-        //cout<<"Pos_x is: "<<pos[3]<<endl;
-        //cout<<"Pos_z is: "<<pos[5]<<endl;
+        
+        cout<<"Pos_x is: "<<pos[3]<<endl;
+        cout<<"Pos_z is: "<<pos[5]<<endl;
         double dist = sqrt(pow(pos[3],2) + pow(pos[5],2));
-        cout<<"Total distance is: "<<pos[3]<<endl;
+        cout<<"Total distance is: "<<dist<<endl;
         
         auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
         auto collisionGroup = mWorld->getConstraintSolver()->getCollisionGroup();
@@ -147,8 +154,8 @@ public:
         
         if (collision)
         {
-            myContactSolve(in_vec, result);
-            //mWorld->getConstraintSolver()->solve();
+            //myContactSolve(in_vec, result);
+            mWorld->getConstraintSolver()->solve();
         }
         
         
@@ -217,7 +224,6 @@ public:
     
     void myContactSolve(Eigen::VectorXd in_vec, const dart::collision::CollisionResult& result)
     {
-        double delTime = mWorld->getTimeStep();
         Eigen::VectorXd in_c = in_vec;
         in_c[3] = in_c[3] / 20.0;
         in_c[4] = in_c[4] / 20.0;
@@ -503,7 +509,9 @@ public:
     }
     
     int ts;
-    double theta_odo;
+    double theta_odox;
+    double theta_odoy;
+    double theta_odoz;
     
     Eigen::Vector6d vel_uncons;
     Eigen::Vector6d pos;
@@ -529,17 +537,9 @@ int main(int argc, char* argv[])
     WorldPtr world = SkelParser::readWorld(DART_DATA_PATH"/NN-contact-force/skel/singleBody_test.skel");
     assert(world != nullptr);
     
-//    std::cout << "please input dtheta_x, dtheta_y, dtheta_z0 and dx, dy, dz:" << std::endl;
+    std::cout << "please input dtheta_x, dtheta_y, dtheta_z0 and dx, dy, dz:" << std::endl;
     double dx, dy, dz, dtheta_x, dtheta_y, dtheta_z;
-//    std::cin >> dtheta_x >> dtheta_y >> dtheta_z >> dx >> dy >> dz;
-    dy = 0.0; dz= 0.0; dtheta_x = 0.0; dtheta_y = 0.0;
-    cout<<"Input dx and dtheta_z"<<endl;
-    cin>>dx>>dtheta_z;
-    
-//    double pos_x, pos_y, pos_z, pos_ax, pos_ay, pos_az;
-//    pos_x = 0.0; pos_z = 0.0; pos_ax = 0.0; pos_ay = 0.0;
-//    cout<<"Input pos_y and pos_az"<<endl;
-//    cin>>pos_y>>pos_az;
+    std::cin >> dtheta_x >> dtheta_y >> dtheta_z >> dx >> dy >> dz;
     
     // Create reference frames for setting the initial velocity
     Eigen::Isometry3d centerTf(Eigen::Isometry3d::Identity());
