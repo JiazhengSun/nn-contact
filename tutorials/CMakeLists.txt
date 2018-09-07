@@ -24,3 +24,6 @@ add_subdirectory(trainRect3DR3);
 
 add_subdirectory(customDataGen)
 add_subdirectory(customRun)
+
+add_subdirectory(PDDrunRect3D)
+add_subdirectory(Metrics)

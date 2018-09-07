@@ -49,7 +49,7 @@
                     <transformation> 0.0 0.0 0.0 0.0 0.0 0.0</transformation>
                     <geometry>
                         <box>
-                            <size>0.2 0.1 0.2</size>
+                            <size>0.3 0.22 0.12</size>
                         </box>
                     </geometry>
                     <color>1.0 0.5 1.0</color>
@@ -58,7 +58,7 @@
                     <transformation> 0.0 0.0 0.0 0.0 0.0 0.0</transformation>
                     <geometry>
                         <box>
-                            <size>0.2 0.1 0.2</size>
+                            <size>0.3 0.22 0.12</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
@@ -67,7 +67,7 @@
             <joint type="free" name="j_hand">
                 <parent>world</parent>
                 <child>h_hand</child>
-                <init_pos>0  0  0   0  0.4   0</init_pos>
+                <init_pos>0  0  0   0  0.3   0</init_pos>
                 <init_vel>0 0 0 0 0 0</init_vel>
             </joint>
         </skeleton>	

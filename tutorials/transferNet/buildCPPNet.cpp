@@ -57,6 +57,7 @@ protected:
 
 vector<vector<double>> extract_bias(const char* file_name)
 {
+    //cout<<"Extracting bias!!"<<endl;
     //Open the file and store all the data
     vector<vector<string>> total_raw_data;
     //vector<vector<vector<float>>> layer_data_mat;
@@ -112,7 +113,8 @@ vector<vector<double>> extract_bias(const char* file_name)
 }
 
 vector<vector<double>> extract_weights(const char* file_name, bool is_test)
-{   
+{
+    //cout<<"extracting weights!!"<<endl;
     //Open the file and store all the data
     vector<vector<string>> total_raw_data;
     //vector<vector<vector<float>>> layer_data_mat;
@@ -176,23 +178,24 @@ vector<vector<double>> extract_weights(const char* file_name, bool is_test)
 
 network<sequential> network_construct(vector<vector<double>> weights_mat, vector<vector<double>> bias_mat, bool is_classifier)
 {
+    //cout<<"Got here"<<endl;
         //Initialize neural net based on type. classifier vs regressor
     network<sequential> net;
     if (is_classifier == true) {
         cout<<"Classifier net!"<<endl;
-        net << fully_connected_layer(9, 128) << activation::tanh()
-        << fully_connected_layer(128, 128) << activation::tanh()
-        << fully_connected_layer(128, 64) << activation::tanh()
-        << fully_connected_layer(64, 3) << activation::softmax();
-        assert(net.in_data_size() == 9);
+        net << fully_connected_layer(21, 256) << activation::relu()
+        << fully_connected_layer(256, 180) << activation::relu()
+        << fully_connected_layer(180, 80) << activation::relu()
+        << fully_connected_layer(80, 3) << activation::softmax();
+        assert(net.in_data_size() == 21);
         assert(net.out_data_size() == 3);
     } else {
         cout<<"Regression net!"<<endl;
-        net << fully_connected_layer(9, 128) << activation::relu()
-        << fully_connected_layer(128, 128) << activation::relu()
-        << fully_connected_layer(128, 64) << activation::relu()
-        << fully_connected_layer(64, 3);
-        assert(net.in_data_size() == 9);
+        net << fully_connected_layer(21, 512) << activation::relu()
+        << fully_connected_layer(512, 360) << activation::relu()
+        << fully_connected_layer(360, 180) << activation::relu()
+        << fully_connected_layer(180, 3); //2 for R1, 3 for R2 and R3
+        assert(net.in_data_size() == 21);
         assert(net.out_data_size() == 3);
     }
 
@@ -212,10 +215,9 @@ network<sequential> network_construct(vector<vector<double>> weights_mat, vector
             l_cnt += 1;
         }   
     }
-    net.save("rect_r3_sym");
+    net.save("3D-rect-R2");
     return net;
 }
-
 
 void evaluateNet(network<sequential> net, vector<vec_t> test_data, vector<vec_t> test_target)
 {
@@ -235,7 +237,6 @@ vector<vec_t> vector_transfer(vector<vector<double>> myVec)
         result.push_back(temp);
     }
     return result;
-
 }
 
 int main(int argc, char* argv[])
@@ -245,44 +246,36 @@ int main(int argc, char* argv[])
     assert(world != nullptr);
     world->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
     
-    //cout<<"opening weights file"<<endl;
-    string temp ="rect_r3_sym_3D_weights.csv";
-    //cout<<"opening bias file"<<endl;
-    string temp_2 ="rect_r3_sym_3D_bias.csv";
-    const char* weight_name;
-    const char* bias_name;
-    weight_name = temp.c_str();
-    bias_name = temp_2.c_str();
-    int flag = -1;
-    bool is_classifier;
-    cout<<"Type 0 for regressor; 1 for classifier "<<endl;
-    cin>>flag;
-    is_classifier = (flag == 1) ? (true):(false); 
-
-    //construct_mlp_from_weights(path_name, is_classifier);
-    vector<vector<double>> weights_mat = extract_weights(weight_name, false);
-    vector<vector<double>> bias_mat = extract_bias(bias_name);
-    network<sequential> net = network_construct(weights_mat, bias_mat, is_classifier);
-    cout<<"Transfer Finished!"<<endl;
-
-    // const char* x_test = "";
-    // const char* y_test = "";
-
-    // vector<vector<double>>  input = extract_weights("/home/jsun303/Desktop/dart-NN-contact-force/data/NN-contact-force/test_data/c1_x_test.csv", true);
-    // vector<vector<double>>  output = extract_bias("/home/jsun303/Desktop/dart-NN-contact-force/data/NN-contact-force/test_data/c1_y_test.csv");
-
-    // vector<vec_t> x_test = vector_transfer(input);
-    // vector<vec_t> y_test = vector_transfer(output);
-    // evaluateNet(net, x_test, y_test);
-
+//    //cout<<"opening weights file"<<endl;
+//    string temp ="3D-rect-R2_weights.csv";
+//    //cout<<"opening bias file"<<endl;
+//    string temp_2 ="3D-rect-R2_bias.csv";
+//    const char* weight_name;
+//    const char* bias_name;
+//    weight_name = temp.c_str();
+//    bias_name = temp_2.c_str();
+//    int flag = -1;
+//    bool is_classifier;
+//    cout<<"Type 0 for regressor; 1 for classifier "<<endl;
+//    cin>>flag;
+//    is_classifier = (flag == 1) ? (true):(false);
+//    //construct_mlp_from_weights(path_name, is_classifier);
+//    vector<vector<double>> weights_mat = extract_weights(weight_name, false);
+//    vector<vector<double>> bias_mat = extract_bias(bias_name);
+//    network<sequential> net = network_construct(weights_mat, bias_mat, is_classifier);
+//    cout<<"Transfer Finished!"<<endl;
 
     //Testing if network models are successfully transfered by testing specific data set
+    
+    network<sequential> net; net.load("3D-rect-R3");
 
-//     vector<vector<double>> x_test;
-//     double first_arr[] = {-1.93004, 1.93004, -0.511833, 0.692334, 0.0538576, -0.81607, 1.53919,-2.18402, 2.01191};
-//     vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
-//     x_test.push_back(first_vec);
-//
+     vector<vector<double>> x_test;
+    double first_arr[] = {1, 0, 0, 0, 1, 0, 0, 0, 1,
+        0, 0, 0, 0.285714, -0.28, 0.285714, 0.285714, -0.28,
+        0.285714, 0, 0.0988, 0 };
+     vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
+     x_test.push_back(first_vec);
+
 //     double second_arr[] = {1.25728, 1.13107, -1.13107, 0.182227, 0.691963, -0.175838, 3.41511, -5.99775, -0.846054};
 //     vector<double> second_vec (second_arr, second_arr + sizeof(second_arr) / sizeof(double));
 //     x_test.push_back(second_vec);
@@ -298,19 +291,19 @@ int main(int argc, char* argv[])
 //     double fifth_arr[] = {-0.235922, -0.235922, 1.55789, 0.384338, -0.43193, 0.553732, 2.83865, -2.01604, -2.1784};
 //     vector<double> fifth_vec (fifth_arr, fifth_arr + sizeof(fifth_arr) / sizeof(double));
 //     x_test.push_back(fifth_vec);
-//
-//     for (int k = 0; k < 5; k++)
-//     {
-//         vec_t in;
-//         double* test_pr = &x_test[k].front();
-//         in.assign(test_pr, test_pr + x_test[k].size());
-//
-//         vec_t result = net.predict(in);
-//         for (int i = 0; i < result.size(); i++) {
-//             cout<<result[i]<<' ';
-//         }
-//         cout<<' '<<endl;
-//     }
+
+     for (int k = 0; k < 1; k++)
+     {
+         vec_t in;
+         double* test_pr = &x_test[k].front();
+         in.assign(test_pr, test_pr + x_test[k].size());
+
+         vec_t result = net.predict(in);
+         for (int i = 0; i < result.size(); i++) {
+             cout<<result[i]<<' ';
+         }
+         cout<<' '<<endl;
+     }
 
     // cout<<"Debugging!"<<endl;
     // cout<<' '<<endl;
