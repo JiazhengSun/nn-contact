@@ -269,12 +269,12 @@ int main(int argc, char* argv[])
     
     network<sequential> net; net.load("3D-rect-R3");
 
-     vector<vector<double>> x_test;
+    vector<vector<double>> x_test;
     double first_arr[] = {1, 0, 0, 0, 1, 0, 0, 0, 1,
         0, 0, 0, 0.285714, -0.28, 0.285714, 0.285714, -0.28,
         0.285714, 0, 0.0988, 0 };
-     vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
-     x_test.push_back(first_vec);
+    vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
+    x_test.push_back(first_vec);
 
 //     double second_arr[] = {1.25728, 1.13107, -1.13107, 0.182227, 0.691963, -0.175838, 3.41511, -5.99775, -0.846054};
 //     vector<double> second_vec (second_arr, second_arr + sizeof(second_arr) / sizeof(double));
