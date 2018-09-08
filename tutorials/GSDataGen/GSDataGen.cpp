@@ -140,13 +140,15 @@ public:
             cout<<"Starting positions are: "<<endl;
             for(int i=0; i < StartPos.size(); i++)
             {
-                cout<<StartPos[i][0]<<", "<<StartPos[i][1]<<", "<<StartPos[i][2]<<", "<<endl;
+                cout<<StartPos[i][0]<<", "<<StartPos[i][1]<<", "<<StartPos[i][2]<<", "<<
+                StartPos[i][3]<<", "<<StartPos[i][4]<<", "<<StartPos[i][5]<<", "<<endl;
             }
             cout<<" "<<endl;
             cout<<"Starting velocities are: "<<endl;
             for(int i=0; i < StartVel.size(); i++)
             {
-                cout<<StartVel[i][0]<<", "<<StartVel[i][1]<<", "<<StartVel[i][2]<<", "<<endl;
+                cout<<StartVel[i][0]<<", "<<StartVel[i][1]<<", "<<StartVel[i][2]<<", "<<
+                StartVel[i][3]<<", "<<StartVel[i][4]<<", "<<StartVel[i][5]<<", "<<endl;
             }
             cout<<" "<<endl;
             cout<<"Final linear positions are: "<<endl;
@@ -164,7 +166,9 @@ public:
             cout<<" "<<endl;
             cout<<"All first contact impulses are: "<<endl;
             for(int i=0; i < FirstContactImpulse.size(); i++) {
-                cout<<FirstContactImpulse[i][0]<<", "<<FirstContactImpulse[i][1]<<", "<<FirstContactImpulse[i][2]<<", " << FirstContactImpulse[i][3]<<", "<<FirstContactImpulse[i][4]<<", "<<FirstContactImpulse[i][5]<<", "<<endl;
+                cout<<FirstContactImpulse[i][0]<<", "<<FirstContactImpulse[i][1]<<", "
+                <<FirstContactImpulse[i][2]<<", " << FirstContactImpulse[i][3]<<", "<<FirstContactImpulse[i][4]<<", "
+                <<FirstContactImpulse[i][5]<<", "<<endl;
             }
 
             sampleCount ++;
