@@ -179,15 +179,15 @@ vector<vector<double>> extract_weights(const char* file_name, bool is_test)
 network<sequential> network_construct(vector<vector<double>> weights_mat, vector<vector<double>> bias_mat, bool is_classifier)
 {
     //cout<<"Got here"<<endl;
-        //Initialize neural net based on type. classifier vs regressor
+    //Initialize neural net based on type. classifier vs regressor
     network<sequential> net;
     if (is_classifier == true) {
         cout<<"Classifier net!"<<endl;
-        net << fully_connected_layer(21, 256) << activation::relu()
+        net << fully_connected_layer(15, 256) << activation::relu()
         << fully_connected_layer(256, 180) << activation::relu()
         << fully_connected_layer(180, 80) << activation::relu()
         << fully_connected_layer(80, 3) << activation::softmax();
-        assert(net.in_data_size() == 21);
+        assert(net.in_data_size() == 15);
         assert(net.out_data_size() == 3);
     } else {
         cout<<"Regression net!"<<endl;
@@ -215,7 +215,7 @@ network<sequential> network_construct(vector<vector<double>> weights_mat, vector
             l_cnt += 1;
         }   
     }
-    net.save("3D-rect-R2");
+    net.save("3D-rect-C2-input15");
     return net;
 }
 
@@ -247,9 +247,9 @@ int main(int argc, char* argv[])
     world->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
     
 //    //cout<<"opening weights file"<<endl;
-//    string temp ="3D-rect-R2_weights.csv";
+//    string temp ="3D-rect-C2-input15_weights.csv";
 //    //cout<<"opening bias file"<<endl;
-//    string temp_2 ="3D-rect-R2_bias.csv";
+//    string temp_2 ="3D-rect-C2-input15_bias.csv";
 //    const char* weight_name;
 //    const char* bias_name;
 //    weight_name = temp.c_str();
@@ -267,12 +267,12 @@ int main(int argc, char* argv[])
 
     //Testing if network models are successfully transfered by testing specific data set
     
-    network<sequential> net; net.load("3D-rect-R3");
+    network<sequential> net; net.load("3D-rect-C2-input15");
 
     vector<vector<double>> x_test;
-    double first_arr[] = {1, 0, 0, 0, 1, 0, 0, 0, 1,
-        0, 0, 0, 0.285714, -0.28, 0.285714, 0.285714, -0.28,
-        0.285714, 0, 0.0988, 0 };
+    double first_arr[] = {1, 0, 0, 0, 0.930141, 0.367203, 0,
+        -0.367203, 0.930141, 0.0666667, 0, 0, 0.285714, -0.146505,
+        0.365241};
     vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
     x_test.push_back(first_vec);
 

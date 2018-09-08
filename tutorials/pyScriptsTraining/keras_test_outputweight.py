@@ -15,12 +15,12 @@ import os
 mpath = '/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/keras_model/3D/'
 wpath = '/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/weights_csv/3D/'
 bpath = '/Users/jiazhengsun/Desktop/nn-contact/data/NN-contact-force/bias_csv/3D/'
-model = load_model(os.path.join(mpath,'3D-rect-C3.h5'))
+model = load_model(os.path.join(mpath,'3D-rect-C2-input15.h5'))
 
 for indi_layer in model.layers:
     print(indi_layer)
 
-with open(wpath + '3D-rect-C3_weights.csv','wb') as wf:
+with open(wpath + '3D-rect-C2-input15_weights.csv','wb') as wf:
     #Classfier Weights : first layer: 5*32, second layer: 32*32, third layer: 32*16
     #Regression Weights: frist layer:: 5*64, second layer: 64* 64, third layer: 64*32
     for i in range(0,7,2):
@@ -41,7 +41,7 @@ with open(wpath + '3D-rect-C3_weights.csv','wb') as wf:
         writer.writerow([total_str])
 
 
-with open(bpath + '3D-rect-C3_bias.csv','wb') as bf:
+with open(bpath + '3D-rect-C2-input15_bias.csv','wb') as bf:
     for i in range(0,7,2):
         #Bname = 'B' + str(i)
         indi_str = ""

@@ -126,44 +126,44 @@ int main(int argc, char* argv[])
     assert(world != nullptr);
     world->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
 
-//    //Deal with first metric -- distance error
-//    double totalLinearPositionGS[] = {}; // x y z
-//    double totalLinearPositionMy[] = {}; // x y z
-//    vector<vector<double>> linearPosGS;
-//    vector<vector<double>> linearPosMy;
-//    for (int i=0; i < sizeof(totalLinearPositionGS)/sizeof(double); i+=3)
-//    {
-//        double indiGs[] = {totalLinearPositionGS[i], totalLinearPositionGS[i+1], totalLinearPositionGS[i+2]};
-//        double indiMy[] = {totalLinearPositionMy[i], totalLinearPositionMy[i+1], totalLinearPositionMy[i+2]};
-//
-//        vector<double> vec_GS (indiGs, indiGs+sizeof(indiGs)/sizeof(double));
-//        vector<double> vec_my (indiMy, indiMy+sizeof(indiMy)/sizeof(double));
-//
-//        linearPosGS.push_back(vec_GS);
-//        linearPosMy.push_back(vec_my);
-//    }
-//    double dist_error = distanceError(linearPosGS, linearPosMy);
-//    cout<<"Distance error of the data set is: "<<dist_error<<endl;
+    //Deal with first metric -- distance error
+    double totalLinearPositionGS[] = {}; // x y z
+    double totalLinearPositionMy[] = {}; // x y z
+    vector<vector<double>> linearPosGS;
+    vector<vector<double>> linearPosMy;
+    for (int i=0; i < sizeof(totalLinearPositionGS)/sizeof(double); i+=3)
+    {
+        double indiGs[] = {totalLinearPositionGS[i], totalLinearPositionGS[i+1], totalLinearPositionGS[i+2]};
+        double indiMy[] = {totalLinearPositionMy[i], totalLinearPositionMy[i+1], totalLinearPositionMy[i+2]};
+
+        vector<double> vec_GS (indiGs, indiGs+sizeof(indiGs)/sizeof(double));
+        vector<double> vec_my (indiMy, indiMy+sizeof(indiMy)/sizeof(double));
+
+        linearPosGS.push_back(vec_GS);
+        linearPosMy.push_back(vec_my);
+    }
+    double dist_error = distanceError(linearPosGS, linearPosMy);
+    cout<<"Distance error of the data set is: "<<dist_error<<endl;
     
     
-//    // Deal with Third metric -- impulse error
-//    double totalImpGS[] = {};
-//    double totalImpMy[] = {};
-//    vector<vector<double>> ImpGSFinal;
-//    vector<vector<double>> ImpMyFinal;
-//    for (int i=0; i < sizeof(totalImpGS)/sizeof(double); i+=6)
-//    {
-//        double indiGs[] = {totalImpGS[i], totalImpGS[i+1], totalImpGS[i+2], totalImpGS[i+3], totalImpGS[i+4], totalImpGS[i+5]};
-//        double indiMy[] = {totalImpMy[i], totalImpMy[i+1], totalImpMy[i+2], totalImpMy[i+3], totalImpMy[i+4], totalImpMy[i+5]};
-//
-//        vector<double> vec_gs (indiGs, indiGs+sizeof(indiGs)/sizeof(double));
-//        vector<double> vec_my (indiMy, indiMy+sizeof(indiMy)/sizeof(double));
-//
-//        ImpGSFinal.push_back(vec_gs);
-//        ImpMyFinal.push_back(vec_my);
-//    }
-//    double imp_error = impulseError(ImpGSFinal, ImpMyFinal);
-//    cout<<"The impulse error of data sets is: "<<imp_error<<endl;
+    // Deal with Third metric -- impulse error
+    double totalImpGS[] = {};
+    double totalImpMy[] = {};
+    vector<vector<double>> ImpGSFinal;
+    vector<vector<double>> ImpMyFinal;
+    for (int i=0; i < sizeof(totalImpGS)/sizeof(double); i+=6)
+    {
+        double indiGs[] = {totalImpGS[i], totalImpGS[i+1], totalImpGS[i+2], totalImpGS[i+3], totalImpGS[i+4], totalImpGS[i+5]};
+        double indiMy[] = {totalImpMy[i], totalImpMy[i+1], totalImpMy[i+2], totalImpMy[i+3], totalImpMy[i+4], totalImpMy[i+5]};
+
+        vector<double> vec_gs (indiGs, indiGs+sizeof(indiGs)/sizeof(double));
+        vector<double> vec_my (indiMy, indiMy+sizeof(indiMy)/sizeof(double));
+
+        ImpGSFinal.push_back(vec_gs);
+        ImpMyFinal.push_back(vec_my);
+    }
+    double imp_error = impulseError(ImpGSFinal, ImpMyFinal);
+    cout<<"The impulse error of data sets is: "<<imp_error<<endl;
     
     
 
