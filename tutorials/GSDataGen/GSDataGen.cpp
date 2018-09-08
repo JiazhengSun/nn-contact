@@ -38,7 +38,7 @@
 #include <fstream>
 
 //#define NUMSAM 500000
-#define NUMSAM 1
+#define NUMSAM 100
 #define UNSYMCONE false
 
 using namespace dart::dynamics;
@@ -85,7 +85,7 @@ public:
     void timeStepping() override
     {
         
-        if (ts % 600 == 0 && sampleCount < NUMSAM)
+        if (ts % 800 == 0 && sampleCount < NUMSAM)
         {
             if (ts > 0)
             {
@@ -133,7 +133,7 @@ public:
             ref.setRelativeTransform(bNode->getTransform(&center));
             bNode->getSkeleton()->getJoint(0)->setVelocities(ref.getSpatialVelocity());
         }
-        else if(ts % 600 == 0 && sampleCount == NUMSAM)
+        else if(ts % 800 == 0 && sampleCount == NUMSAM)
         {
             //cout<<"Total generated sample number is: "<<sampleCount<<endl;
             

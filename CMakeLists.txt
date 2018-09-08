@@ -309,29 +309,18 @@ if(TARGET dart)
 
     # Add tutorial targets
     dart_add_tutorial(tutorials/transferNet dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/runSingleRect dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/runRect3D dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/runMultiLink dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataRectC1 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataRectC2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataRectR1 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataRectR2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataPolyC1 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataPolyC2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataPolyR1 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/genTrainDataPolyR2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode) 
-
     dart_add_tutorial(tutorials/trainRect3DC1 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/trainRect3DC2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)   
     dart_add_tutorial(tutorials/trainRect3DC3 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/trainRect3DR1 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/trainRect3DR2 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/trainRect3DR3 dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-
     dart_add_tutorial(tutorials/customDataGen dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
-    dart_add_tutorial(tutorials/customRun dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
+    dart_add_tutorial(tutorials/GSDataGen dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/PDDrunRect3D dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/Metrics dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
+    dart_add_tutorial(tutorials/PDDDataGen dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
 
     # Add a "tutorials" target to build tutorials.
     get_property(tutorials GLOBAL PROPERTY DART_TUTORIALS)

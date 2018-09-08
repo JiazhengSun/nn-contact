@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
     double imp_error = impulseError(ImpGSFinal, ImpMyFinal);
     cout<<"The impulse error of data sets is: "<<imp_error<<endl;
     
-    
+
 
     // Deal with second metric -- orientation error
     double quatGsTotal[] = {};//order in w x y z
