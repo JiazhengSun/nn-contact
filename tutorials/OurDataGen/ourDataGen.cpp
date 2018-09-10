@@ -276,14 +276,16 @@ public:
         bool collision = collisionGroup->collide(option, &result);
         if (collision)
         {
+            tempImp = Eigen::Vector6d::Zero();
             myContactSolve(in_vec, result, vel_in_range);
             if(firstContact == true)
             {
                 firstContact = false;
-                Eigen::Vector6d firstImp = hand_bd->getConstraintImpulse();
+                Eigen::Vector6d firstImp = hand_bd->getConstraintImpulse() + tempImp;
                 if (sampleCount < NUMSAM){FirstContactImpulse.push_back(firstImp);}
             }
         }
+        
         // Compute velocity changes given constraint impulses
         for (size_t i=0; i < mWorld->getNumSkeletons(); i++)
         {
@@ -435,7 +437,6 @@ public:
                 
                 hand_bd -> clearExternalForces();
                 hand_bd -> addExtForce(fric_force, lP1, false, true);
-                
                 hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
                 //std::cout << hand_bd -> getConstraintImpulse().transpose() << std::endl;
                 hand_bd -> clearExternalForces();
@@ -443,6 +444,8 @@ public:
                 
                 hand_bd -> setFrictionCoeff(0.0);
                 ground_bd -> setFrictionCoeff(0.0);
+                
+                tempImp = hand_bd->getConstraintImpulse();
                 
                 hand_bd -> setConstraintImpulse(Eigen::Vector6d::Zero());
                 mWorld->getConstraintSolver()->solve();
@@ -528,11 +531,15 @@ public:
                 hand_bd -> addExtTorque(torque, false);
                 
                 hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
+                
                 hand_bd -> clearExternalForces();
                 hand_bd -> getSkeleton()->computeImpulseForwardDynamics();
                 
                 hand_bd -> setFrictionCoeff(0.0);
                 ground_bd -> setFrictionCoeff(0.0);
+                
+                tempImp = hand_bd->getConstraintImpulse();
+                
                 hand_bd -> setConstraintImpulse(Eigen::Vector6d::Zero());
                 mWorld->getConstraintSolver()->solve(); // add normal impulse
                 
@@ -552,21 +559,35 @@ public:
             }
             
         }
-        else if (result.getNumContacts() == 4) // C3 R3
+        else if (result.getNumContacts() >=3) // C3 R3
         {
+            Eigen::Vector3d cho_1;
+            Eigen::Vector3d cho_2;
             auto PP1 = result.getContact(0).point;
+            auto PP2 = result.getContact(1).point;
             auto PP3 = result.getContact(2).point;
-            auto cVel = hand_bd->getLinearVelocity(hand_bd->getWorldTransform().inverse() * ((PP1+PP3)/2.0),Frame::World(),Frame::World());
-            auto con_center = hand_bd->getCOM() - ((PP1+PP3)/2.0);
+            Eigen::Vector3d vec1_2 = PP1 - PP2;
+            double diff_12 = vec1_2.norm();
+            Eigen::Vector3d vec2_3 = PP2 - PP3;
+            double diff_23 = vec2_3.norm();
+            Eigen::Vector3d vec1_3 = PP1 - PP3;
+            double diff_13 = vec1_3.norm();
+            if (diff_12 >= diff_23 && diff_12 >= diff_13) // point 1 and 2 furthest
+            {   cho_1 = PP1; cho_2 = PP2; }
+            else if (diff_13 >= diff_12 && diff_13 >= diff_23) // point 1 and 3 furthest
+            {   cho_1 = PP1; cho_2 = PP3; }
+            else if (diff_23 >= diff_13 && diff_23 >= diff_12) // point 2 and 3 furthest
+            {   cho_1 = PP3; cho_2 = PP2; }
+            
+            auto cVel = hand_bd->getLinearVelocity(hand_bd->getWorldTransform().inverse() * ((cho_1+cho_2)/2.0),Frame::World(),Frame::World());
+
+            auto con_center = hand_bd->getCOM() - ((cho_1+cho_2)/2.0);
             in_vec.segment<3>(15) = cVel;
             in_vec.segment<3>(18) = con_center;
             double scale = scaleInVec(in_vec);
-            
             vec_t inputnn;
             inputnn.assign(in_vec.data(), in_vec.data()+21);
-            
             label_t c3output = c3net.predict_label(inputnn);
-            //cout << "Face Contact:" << c3output <<endl;
             
             if (c3output == 1)
             {
@@ -607,6 +628,9 @@ public:
                 
                 hand_bd -> setFrictionCoeff(0.0);
                 ground_bd -> setFrictionCoeff(0.0);
+                
+                tempImp = hand_bd->getConstraintImpulse();
+                
                 hand_bd -> setConstraintImpulse(Eigen::Vector6d::Zero());
                 mWorld->getConstraintSolver()->solve(); // add normal impulse
                 
@@ -628,9 +652,9 @@ public:
         else
         {
             std::cout << "WARNING: # of contact" << result.getNumContacts() << std::endl;
-            cout<<"Point 1 is: "<<result.getContact(0).point<<endl;
-            cout<<"Point 2 is: "<<result.getContact(1).point<<endl;
-            cout<<"Point 3 is: "<<result.getContact(2).point<<endl;
+//            cout<<"Point 1 is: "<<result.getContact(0).point<<endl;
+//            cout<<"Point 2 is: "<<result.getContact(1).point<<endl;
+//            cout<<"Point 3 is: "<<result.getContact(2).point<<endl;
             cout<<"Error occrus at data set: "<<sampleCount<<endl;
         }
     }
@@ -654,6 +678,7 @@ public:
     vector<Eigen::Vector3d> EndLinearPos;
     vector<Eigen::Quaterniond> EndAngularPos;
     vector<Eigen::Vector6d> FirstContactImpulse;
+    Eigen::Vector6d tempImp;
 protected:
 };
 

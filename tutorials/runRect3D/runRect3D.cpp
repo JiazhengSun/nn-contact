@@ -411,12 +411,28 @@ public:
             }
             
         }
-        else if (result.getNumContacts() == 4) // C3 R3
+        else if (result.getNumContacts() >=3) // C3 R3
         {
+            Eigen::Vector3d cho_1;
+            Eigen::Vector3d cho_2;
             auto PP1 = result.getContact(0).point;
+            auto PP2 = result.getContact(1).point;
             auto PP3 = result.getContact(2).point;
-            auto cVel = hand_bd->getLinearVelocity(hand_bd->getWorldTransform().inverse() * ((PP1+PP3)/2.0),Frame::World(),Frame::World());
-            auto con_center = hand_bd->getCOM() - ((PP1+PP3)/2.0);
+            Eigen::Vector3d vec1_2 = PP1 - PP2;
+            double diff_12 = vec1_2.norm();
+            Eigen::Vector3d vec2_3 = PP2 - PP3;
+            double diff_23 = vec2_3.norm();
+            Eigen::Vector3d vec1_3 = PP1 - PP3;
+            double diff_13 = vec1_3.norm();
+            if (diff_12 >= diff_23 && diff_12 >= diff_13) // point 1 and 2 furthest
+            {   cho_1 = PP1; cho_2 = PP2; }
+            else if (diff_13 >= diff_12 && diff_13 >= diff_23) // point 1 and 3 furthest
+            {   cho_1 = PP1; cho_2 = PP3; }
+            else if (diff_23 >= diff_13 && diff_23 >= diff_12) // point 2 and 3 furthest
+            {   cho_1 = PP3; cho_2 = PP2; }
+            
+            auto cVel = hand_bd->getLinearVelocity(hand_bd->getWorldTransform().inverse() * ((cho_1+cho_2)/2.0),Frame::World(),Frame::World());
+            auto con_center = hand_bd->getCOM() - ((cho_1+cho_2)/2.0);
             in_vec.segment<3>(15) = cVel;
             in_vec.segment<3>(18) = con_center;
             double scale = scaleInVec(in_vec);
