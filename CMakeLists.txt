@@ -321,6 +321,7 @@ if(TARGET dart)
     dart_add_tutorial(tutorials/PDDrunRect3D dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/Metrics dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
     dart_add_tutorial(tutorials/PDDDataGen dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
+    dart_add_tutorial(tutorials/OurDataGen dart-utils-urdf dart-gui dart-collision-bullet dart-collision-ode)
 
     # Add a "tutorials" target to build tutorials.
     get_property(tutorials GLOBAL PROPERTY DART_TUTORIALS)

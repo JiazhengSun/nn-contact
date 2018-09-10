@@ -37,8 +37,7 @@
 #include <iostream>
 #include <fstream>
 
-//#define NUMSAM 500000
-#define NUMSAM 100
+#define NUMSAM 50
 #define UNSYMCONE false
 
 using namespace dart::dynamics;
@@ -108,15 +107,15 @@ public:
             pos[2] = dart::math::random(-1*Pi, Pi);
             pos[3] = 0.0;
             pos[5] = 0.0;
-            pos[4] = dart::math::random(0.3, 1.8);
+            pos[4] = dart::math::random(0.3, 0.45);
             if (sampleCount < NUMSAM){StartPos.push_back(pos);}
             mWorld->getSkeleton("hand skeleton")->getJoint(0)->setPositions(pos);
             
             // Set velocities
             Eigen::Vector6d vel = Eigen::Vector6d::Zero();
-            vel[0] = dart::math::random(-20,20);
-            vel[1] = dart::math::random(-20,20);
-            vel[2] = dart::math::random(-20,20);
+            vel[0] = dart::math::random(-15,15);
+            vel[1] = dart::math::random(-15,15);
+            vel[2] = dart::math::random(-15,15);
             vel[3] = dart::math::random(-3,3); //x vel
             vel[4] = 0.0; //y vel
             vel[5] = dart::math::random(-3,3); //z vel

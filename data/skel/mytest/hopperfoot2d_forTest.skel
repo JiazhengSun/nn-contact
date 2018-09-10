@@ -6,28 +6,25 @@
             <gravity>0 -10 0</gravity>
             <collision_detector>bullet</collision_detector>
         </physics>
+        
         <skeleton name="ground skeleton">
             <mobile>false</mobile>
             <body name="ground">
-                <transformation>0 -0.025 0 0 0 0</transformation>
+                <transformation>0 -0.0 0 0 0 0</transformation>
                 <visualization_shape>
-                    <transformation>0 0.0 0 0 0 0</transformation>
+                    <transformation>0 -0.025 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>20.0 0.05 20.0</size>
+                            <size>5.0 0.05 5.0</size>
                         </box>
                     </geometry>
                     <color>0.5 0.5 0.5</color>
                 </visualization_shape>
                 <collision_shape>
-                    <transformation>0 0.0 0 0 0 0</transformation>
+                    <transformation>0 -0.25 0 0.0 0 0</transformation>
                     <geometry>
-<!--                         <plane>
-                            <normal>0.0 1.0 0.0</normal>
-                            <offset>0.0</offset>
-                        </plane> -->
                         <box>
-                            <size>20.0 0.05 20.0</size>
+                            <size>5.0 0.5 5.0</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
@@ -39,7 +36,7 @@
         </skeleton>	
 
         <skeleton name="hand skeleton">
-            <body name="h_hand">
+            <body name="h_foot">
                 <transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
                 <inertia>
                     <mass>1.0</mass>
@@ -64,10 +61,10 @@
                 </collision_shape>                                
             </body>
             
-            <joint type="free" name="j_hand">
+            <joint type="free" name="j_foot">
                 <parent>world</parent>
-                <child>h_hand</child>
-                <init_pos>0  0  0   0  0.3   0</init_pos>
+                <child>h_foot</child>
+                <init_pos>1.5 2.3 -0.8 0 1.2 0</init_pos>
                 <init_vel>0 0 0 0 0 0</init_vel>
             </joint>
         </skeleton>	
