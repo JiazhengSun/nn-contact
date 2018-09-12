@@ -215,7 +215,7 @@ network<sequential> network_construct(vector<vector<double>> weights_mat, vector
             l_cnt += 1;
         }   
     }
-    net.save("3D-5gon-C3");
+    net.save("3D-rect-R3");
     return net;
 }
 
@@ -247,9 +247,9 @@ int main(int argc, char* argv[])
     world->setGravity(Eigen::Vector3d(0.0, 0.0, 0));
     
 //    //cout<<"opening weights file"<<endl;
-//    string temp ="3D-5gon-C3_weights.csv";
+//    string temp ="3D-rect-R3_weights.csv";
 //    //cout<<"opening bias file"<<endl;
-//    string temp_2 ="3D-5gon-C3_bias.csv";
+//    string temp_2 ="3D-rect-R3_bias.csv";
 //    const char* weight_name;
 //    const char* bias_name;
 //    weight_name = temp.c_str();
@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
 
     //Testing if network models are successfully transfered by testing specific data set
     
-    network<sequential> net; net.load("3D-5gon-C3");
+    network<sequential> net; net.load("3D-rect-R3");
 
     vector<vector<double>> x_test;
     double first_arr[] = {1, 0, 0, 0, 1, 0, 0, 0, 1,
