@@ -395,9 +395,9 @@ void ConstraintSolver::updateConstraints()
   //----------------------------------------------------------------------------
   // Update automatic constraints: contact constraints
   //----------------------------------------------------------------------------
-  // mCollisionResult.clear();
+  mCollisionResult.clear();
 
-  // mCollisionGroup->collide(mCollisionOption, &mCollisionResult);
+  mCollisionGroup->collide(mCollisionOption, &mCollisionResult);
 
   // Destroy previous contact constraints
   mContactConstraints.clear();

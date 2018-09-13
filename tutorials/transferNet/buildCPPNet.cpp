@@ -267,12 +267,12 @@ int main(int argc, char* argv[])
 
     //Testing if network models are successfully transfered by testing specific data set
     
-    network<sequential> net; net.load("3D-rect-R3");
+    network<sequential> net; net.load("3D-rect-PDD-R1");
 
     vector<vector<double>> x_test;
-    double first_arr[] = {1, 0, 0, 0, 1, 0, 0, 0, 1,
-        0, 0, 0, 0.285714, -0.28, 0.285714, 0.285714, -0.28,
-        0.285714, 0, 0.0988, 0};
+    double first_arr[] = {0.997834, -0.0225904, -0.0617758, 0.0347001, 0.978643, 0.20262, 0.0558792,
+        -0.204325, 0.977307, 0.0441396, -0.178487, -0.21877, 0.17429, -0.111783,
+        0.113199, 0.0276258, -0.30103, 0.147426, -0.895265, 0.232987, -0.162503 };
     vector<double> first_vec (first_arr, first_arr + sizeof(first_arr) / sizeof(double));
     x_test.push_back(first_vec);
 

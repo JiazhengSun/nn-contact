@@ -15,7 +15,7 @@
                     <transformation>0 -0.025 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>5.0 0.05 5.0</size>
+                            <size>15.0 0.05 15.0</size>
                         </box>
                     </geometry>
                     <color>0.5 0.5 0.5</color>
@@ -24,7 +24,7 @@
                     <transformation>0 -0.25 0 0.0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>5.0 0.5 5.0</size>
+                            <size>15.0 0.5 15.0</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
@@ -64,7 +64,7 @@
             <joint type="free" name="j_foot">
                 <parent>world</parent>
                 <child>h_foot</child>
-                <init_pos>1.5 2.3 -0.8 0 1.2 0</init_pos>
+                <init_pos>1.5 2.3 -0.8 0 0.6 0</init_pos>
                 <init_vel>0 0 0 0 0 0</init_vel>
             </joint>
         </skeleton>	
