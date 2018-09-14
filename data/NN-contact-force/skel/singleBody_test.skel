@@ -4,8 +4,9 @@
         <physics>
             <time_step>0.002</time_step>
             <gravity>0 -10 0</gravity>
-            <collision_detector>bullet</collision_detector>
+            <collision_detector>dart</collision_detector>
         </physics>
+        
         <skeleton name="ground skeleton">
             <mobile>false</mobile>
             <body name="ground">
@@ -14,7 +15,7 @@
                     <transformation>0 0.0 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>20.0 0.05 20.0</size>
+                            <size>5.0 0.05 1.0</size>
                         </box>
                     </geometry>
                     <color>0.5 0.5 0.5</color>
@@ -27,7 +28,7 @@
                             <offset>0.0</offset>
                         </plane> -->
                         <box>
-                            <size>20.0 0.05 20.0</size>
+                            <size>50.0 0.05 1.0</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
@@ -36,7 +37,7 @@
                 <parent>world</parent>
                 <child>ground</child>
             </joint>
-        </skeleton>	
+        </skeleton> 
 
         <skeleton name="hand skeleton">
             <body name="h_hand">
@@ -49,7 +50,7 @@
                     <transformation> 0.0 0.0 0.0 0.0 0.0 0.0</transformation>
                     <geometry>
                         <box>
-                            <size>0.3 0.22 0.12</size>
+                            <size>0.2 0.1 0.2</size>
                         </box>
                     </geometry>
                     <color>1.0 0.5 1.0</color>
@@ -58,7 +59,7 @@
                     <transformation> 0.0 0.0 0.0 0.0 0.0 0.0</transformation>
                     <geometry>
                         <box>
-                            <size>0.3 0.22 0.12</size>
+                            <size>0.2 0.1 0.2</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
@@ -67,10 +68,9 @@
             <joint type="free" name="j_hand">
                 <parent>world</parent>
                 <child>h_hand</child>
-                <init_pos>0  0  0   0  0.3   0</init_pos>
+                <init_pos>0 0 2.8 0 0.3 0</init_pos>
                 <init_vel>0 0 0 0 0 0</init_vel>
             </joint>
-        </skeleton>	
+        </skeleton> 
     </world>
 </skel>
-

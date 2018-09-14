@@ -14,3 +14,5 @@ add_subdirectory(Metrics)
 add_subdirectory(rectDataGen)
 add_subdirectory(run5gon3D)
 add_subdirectory(pentaDataGen)
+add_subdirectory(runRect2D)
+
