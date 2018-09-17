@@ -28,7 +28,7 @@
  *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *   POSSIBILITY OF SUCH DAMAGE.
  */
-
+//cout << "Point local coordinates: "<<hand_bd->getWorldTransform().inverse() * PP1<<endl;
 #include "dart/dart.hpp"
 #include "dart/gui/gui.hpp"
 #include "dart/collision/bullet/bullet.hpp"
@@ -140,10 +140,7 @@ public:
         }
         
         pos = hand_bd->getSkeleton()->getPositions();
-        cout << "t: " << ts << endl;
-        cout<<"Pos is: "<<pos.transpose()<<endl;
         vel_uncons = hand_bd->getSpatialVelocity(Frame::World(),Frame::World());
-        cout<<"Velocity is: "<<vel_uncons.transpose()<<endl;
         bool vel_in_range = checkVelocityRange(vel_uncons);
         
         in_vec = Eigen::VectorXd::Zero(21);
@@ -157,9 +154,55 @@ public:
         
         //        Eigen::Vector3d oldAng = hand_bd->getWorldTransform().linear() * hand_bd->getAngularMomentum();
         //cout<<result.getNumContacts()<<endl;
-        
+        if (ts == 800){cout<<"DONEEEEEEEEEEEEEDONEDONEDONE"<<endl;}
         if (collision)
         {
+            int numCon = result.getNumContacts();
+            if(numCon == 1)
+            {
+                auto P1 = result.getContact(0).point;
+                auto LocalP1 = hand_bd->getWorldTransform().inverse() * P1;
+                if((LocalP1-P1_h).norm() >= 1e-2)
+                {
+                    cout<<"Point Contact!"<<endl;
+                    cout<<"Contact position is: "<<(hand_bd->getWorldTransform().inverse() * P1).transpose()<<endl;
+                    P1_h = LocalP1;
+                }
+
+            }
+            if(numCon == 2)
+            {
+                auto P1 = result.getContact(0).point;
+                auto LocalP1 = hand_bd->getWorldTransform().inverse() * P1;
+                auto P2 = result.getContact(1).point;
+                auto LocalP2 = hand_bd->getWorldTransform().inverse() * P2;
+                if((LocalP1 - L1).norm() >= 1e-2 && (LocalP2 - L2).norm() >= 1e-2)
+                {
+                    cout<<"Line Contact!"<<endl;
+                    cout<<"Contact Pt1 is: "<<LocalP1.transpose()<<endl;
+                    cout<<"Contact Pt2 is: "<<LocalP2.transpose()<<endl;
+                    L1 = LocalP1; L2 = LocalP2;
+                }
+
+            }
+            if(numCon >=3)
+            {
+                auto P1 = result.getContact(0).point;
+                auto LocalP1 = hand_bd->getWorldTransform().inverse() * P1;
+                auto P2 = result.getContact(1).point;
+                auto LocalP2 = hand_bd->getWorldTransform().inverse() * P2;
+                auto P3 = result.getContact(2).point;
+                auto LocalP3 = hand_bd->getWorldTransform().inverse() * P3;
+                if((LocalP1 - F1).norm() >= 1e-2 && (LocalP2 - F2).norm() >= 1e-2 && (LocalP3 - F3).norm() >= 1e-2)
+                {
+                    cout<<"Face Contact!"<<endl;
+                    cout<<"Contact Pt1 is: "<<LocalP1.transpose()<<endl;
+                    cout<<"Contact Pt2 is: "<<LocalP2.transpose()<<endl;
+                    cout<<"Contact Pt3 is: "<<LocalP3.transpose()<<endl;
+                    F1 = LocalP1; F2 = LocalP2; F3 = LocalP3;
+                }
+            }
+            
             
             if (conModel == 0)
             {
@@ -186,15 +229,6 @@ public:
                 continue;
             
             skel->computeImpulseForwardDynamics();
-            
-            //            Eigen::Vector3d newVel = hand_bd->getCOMLinearVelocity(Frame::World(),Frame::World());
-            //            auto fricx = (newVel[0] -  vel_uncons[3])/mWorld->getTimeStep();
-            //            auto fy = (newVel[1] -  vel_uncons[4])/mWorld->getTimeStep();
-            //            auto fricz = (newVel[2] -  vel_uncons[5])/mWorld->getTimeStep();
-            //            Eigen::Vector3d newAng = hand_bd->getWorldTransform().linear() * hand_bd->getAngularMomentum();
-            //            auto tauy = (newAng[1] - oldAng[1])/mWorld->getTimeStep();
-            //            std::cout << fricx << " " << fy << " "<< fricz << " " << tauy << std::endl;
-            
             skel->integratePositions(mWorld->getTimeStep());
             skel->clearInternalForces();
             skel->clearExternalForces();
@@ -202,6 +236,16 @@ public:
             skel->resetCommands();
         }
         ts++;
+    }
+    
+    Eigen::Vector3d PrecisionLimit(Eigen::Vector3d input)
+    {
+        double vx = input[0]; double vy = input[1]; double vz = input[2];
+        double scale = 0.01;  // i.e. round to nearest one-hundreth
+        double new_x = (int)(vx / scale) * scale;
+        double new_y = (int)(vy / scale) * scale;
+        double new_z = (int)(vz / scale) * scale;
+        return Eigen::Vector3d(new_x, new_y, new_z);
     }
     
     // Yifeng: they share the same vel range now...
@@ -271,12 +315,6 @@ public:
             in_vec.segment<9>(9) = in_vec.segment<9>(9) * scale;
         }
         
-        //        for (int i = 0; i < in_vec.size(); i++)
-        //        {
-        //            std::cout << in_vec[i] << " ,";
-        //        }
-        //        std::cout << std::endl;
-        
         return scale;
     }
     
@@ -311,7 +349,6 @@ public:
             inputnn.assign(in_vec.data(), in_vec.data()+21);
             
             label_t c1output = c1net.predict_label(inputnn);
-            cout << "Point Contact:" << c1output << endl;
             if (c1output == 1) // Static case -> apply constraints
             {
                 // set constraints
@@ -340,15 +377,11 @@ public:
                 Eigen::Vector3d fric_force;
                 fric_force << fx, 0, fz;
                 
-                cout << scale << endl;
-                
-                cout<<"Point Contact Force is "<< fric_force.transpose()<<endl;
-                
                 hand_bd -> clearExternalForces();
                 hand_bd -> addExtForce(fric_force, lP1, false, true);
                 
                 hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
-                std::cout << hand_bd -> getConstraintImpulse().transpose() << std::endl;
+//                std::cout << hand_bd -> getConstraintImpulse().transpose() << std::endl;
                 hand_bd -> clearExternalForces();
                 hand_bd -> getSkeleton()->computeImpulseForwardDynamics();
                 
@@ -357,8 +390,6 @@ public:
                 
                 hand_bd -> setConstraintImpulse(Eigen::Vector6d::Zero());
                 mWorld->getConstraintSolver()->solve();
-                
-                std::cout << hand_bd -> getConstraintImpulse().transpose() << std::endl;
                 
                 hand_bd -> setFrictionCoeff(1.0);
                 ground_bd -> setFrictionCoeff(1.0);
@@ -397,7 +428,6 @@ public:
             //            inputnn[16] += 0.8;
             
             label_t c2output = c2net.predict_label(inputnn_c);
-            cout << "Line Contact:" << c2output <<endl;
             
             if (c2output == 1)
             {
@@ -431,8 +461,6 @@ public:
                 fric_force << fx, 0, fz;
                 Eigen::Vector3d torque;
                 torque << -pos[4]*fz, tauy, pos[4]*fx;
-                
-                cout<<"Line Contact Force/toque is "<< fric_force.transpose() << " t " << tauy << endl;
                 
                 hand_bd -> clearExternalForces();
                 hand_bd -> addExtForce(fric_force, Eigen::Vector3d(0.0, 0.0, 0), false, true);
@@ -487,7 +515,6 @@ public:
             inputnn.assign(in_vec.data(), in_vec.data()+21);
             
             label_t c3output = c3net.predict_label(inputnn);
-            cout << "Face Contact:" << c3output <<endl;
             
             if (c3output == 1)
             {
@@ -515,8 +542,6 @@ public:
                 fric_force << fx, 0, fz;
                 Eigen::Vector3d torque;
                 torque << -pos[4]*fz, tauy, pos[4]*fx;
-                
-                cout<<"Face Contact Force/toque is "<< fric_force.transpose() << " t " << tauy << endl;
                 
                 hand_bd -> clearExternalForces();
                 hand_bd -> addExtForce(fric_force, Eigen::Vector3d(0.0, 0.0, 0), false, true);
@@ -583,7 +608,6 @@ public:
             double fz = *(r1output.begin()+2) * 100.0 / scale;
             Eigen::Vector3d con_force;
             con_force << fx, fy, fz;
-            cout<<"Point Contact Force is "<<con_force.transpose()<<endl;
             hand_bd -> clearExternalForces();
             hand_bd -> addExtForce(con_force, lP1, false, true);
             hand_bd -> addConstraintImpulse(hand_bd->getAspectState().mFext * mWorld->getTimeStep());
@@ -611,10 +635,8 @@ public:
             double tz = *(r2output.begin()+2) * 6.0 / scale;
             Eigen::Vector3d con_force;
             con_force << fx, fy, fz;
-            cout<<"Line Contact Force is: "<<con_force.transpose()<<endl;
             Eigen::Vector3d con_torque;
             con_torque << tx, ty, tz;
-            cout<<"Line Contact Torque is: "<<con_torque.transpose()<<endl;
             hand_bd -> clearExternalForces();
             hand_bd -> addExtForce(con_force, Eigen::Vector3d::Zero(), false, true);
             hand_bd -> addExtTorque(con_torque, true);  // Yifeng: PDD outputs local torque
@@ -656,8 +678,6 @@ public:
             con_force << fx, fy, fz;
             Eigen::Vector3d con_torque;
             con_torque << tx, ty, tz;
-            cout<<"Face Contact Force Is: "<<con_force.transpose()<<endl;
-            cout<<"Face Contact Torque is: "<<con_torque.transpose()<<endl;
             hand_bd -> clearExternalForces();
             hand_bd -> addExtForce(con_force, Eigen::Vector3d::Zero(), false, true);
             hand_bd -> addExtTorque(con_torque, true);  // Yifeng: PDD outputs local torque
@@ -684,6 +704,11 @@ public:
     
     BodyNodePtr hand_bd;
     BodyNodePtr ground_bd;
+    
+    Eigen::Vector3d P1_h= Eigen::Vector3d::Zero();
+    Eigen::Vector3d L1 = Eigen::Vector3d::Zero(); Eigen::Vector3d L2 = Eigen::Vector3d::Zero();
+    Eigen::Vector3d F1 = Eigen::Vector3d::Zero(); Eigen::Vector3d F2 = Eigen::Vector3d::Zero();
+    Eigen::Vector3d F3 = Eigen::Vector3d::Zero();
     
     int conModel;
     

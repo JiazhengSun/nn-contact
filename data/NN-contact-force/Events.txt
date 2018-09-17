@@ -1,0 +1,535 @@
+Vertices:
+A: 0.15, 	0.11, 	0.06
+B: 0.15, 	-0.11, 	0.06
+C: 0.15, 	-0.11,	-0.06
+D: 0.15, 	0.11, 	-0.06
+E: -0.15, 	0.11, 	-0.06
+F: -0.15, 	0.11, 	0.06
+G: -0.15, 	-0.11, 	0.06
+H: -0.15, 	-0.11, 	-0.06
+
+Run #1: input: 2 2 2 3 0 0
+DART: 
+Point Contact! 
+Contact position is: -0.1480994165 -0.1063431123 0.05890348536 => G
+Line Contact!
+Contact Pt1 is: -0.1479206578 -0.1069208921 0.05991786742 => G
+Contact Pt2 is:  -0.1494046481  -0.1091184343 -0.06002348392 => H
+Point Contact!
+Contact position is:   -0.149444428  -0.1092251713 -0.05995350833 => H
+Line Contact!
+Contact Pt1 is:  -0.1509064145  -0.1097017704 -0.06026573055 => H
+Contact Pt2 is:   0.1499674365  -0.1080504694 -0.05756308999 =>C
+Point Contact!
+Contact position is:   0.1499299414  -0.1083469976 -0.05747393993 => C
+Line Contact!
+Contact Pt1 is:   0.1498080158  -0.1099771152 -0.05755258144 =>C
+Contact Pt2 is:   0.1499681317   0.1100038093 -0.05959351969 =>D
+Point Contact!
+Contact position is:   0.1499958825   0.1099934579 -0.05963557407 =>D
+Line Contact!
+Contact Pt1 is:   0.1500031794   0.1099914025 -0.05964820205 => D
+Contact Pt2 is:  -0.1499735873   0.1099255783 -0.05700161306 =>E
+Face Contact!
+Contact Pt1 is:  0.1500028761  0.1099965509 -0.0596844708 => D
+Contact Pt2 is:  -0.1499732074   0.1099667001 -0.05700485699 => E
+Contact Pt3 is: -0.1499951388 -0.1100059401   -0.05946093 =>H
+
+Result: G => GH => H => HC => C => CD => D => DE => DEHC
+
+
+Ours:
+Point Contact!
+Contact position is: -0.1480994165 -0.1063431123 0.05890348536 => G
+Line Contact!
+Contact Pt1 is:  -0.1500000063  -0.1099999794 -0.06000001329 =>H
+Contact Pt2 is: -0.1500000471 -0.1099999763 0.05999996459 =>G
+Point Contact!
+Contact position is:  -0.1500000137  -0.1099999673 -0.06000001897 => H
+Point Contact!
+Contact position is:   0.1499999805  -0.1100001001 -0.05999999937 =>C
+Line Contact!
+Contact Pt1 is:   0.1499999848  -0.1099999974 -0.06000000957 => C
+Contact Pt2 is:   0.1499999783     0.11000003 -0.06000001043 => D
+Point Contact!
+Contact position is:    0.149999991   0.1099999723 -0.05999998796 =>D
+Line Contact!
+Contact Pt1 is:    0.150000018   0.1100000148 -0.05999998482 =>D
+Contact Pt2 is:  -0.1500000029   0.1100000657 -0.05999999084 =>E
+Face Contact!
+Contact Pt1 is:   0.1500000027   0.1100000063 -0.06000001182 =>D
+Contact Pt2 is:   -0.150000025   0.1100000153 -0.06000001284 =>E
+Contact Pt3 is:   0.1500000031  -0.1099998911 -0.06000001355 =>C
+
+Result: G => GH => H => C => CD => D => DE => DEHC
+
+
+PDD:
+Point Contact!
+Contact position is: -0.1480994165 -0.1063431123 0.05890348536 => G
+Line Contact!
+Contact Pt1 is: -0.1487602739 -0.1081490056 0.05996507365	=>G
+Contact Pt2 is:  -0.1498081211  -0.1097135373 -0.06000537202 =>H
+Point Contact!
+Contact position is:  -0.1496590492  -0.1108998679 -0.06007126128 =>H
+Point Contact!
+Contact position is:   0.1483026199   0.1098400365 -0.05576071666 =>D
+Line Contact!
+Contact Pt1 is:    0.149120043   0.1099794479 -0.05776785901 => D
+Contact Pt2 is:   0.1498091099  -0.1100045443 -0.05951598329 => C
+Point Contact!
+Contact position is:   0.1476812303  -0.1120273452 -0.06198702747 =>C
+Point Contact!
+Contact position is:  -0.1499537891  -0.1098167949 -0.05970225154 =>H
+Point Contact!
+Contact position is:   0.1499808469  -0.1093370293 -0.05916631313 => C
+Line Contact!
+Contact Pt1 is:   0.1482598377   -0.109123499 -0.06135256673 => C
+Contact Pt2 is:   0.1497991351   0.1099992225 -0.05970193037 => D
+Point Contact!
+Contact position is:   0.1499310594   0.1099964013 -0.05989817646 => D
+Line Contact!
+Contact Pt1 is:   0.1492147705   0.1105146038 -0.05963433365 => D
+Contact Pt2 is: 0.1497656827 0.1082597573 0.0599684059 => A
+Point Contact!
+Contact position is:   0.149692871  0.1074870898 0.05985965601 => A
+Line Contact!
+Contact Pt1 is:  0.1499996091  0.1092490935 0.05973498084 => A
+Contact Pt2 is: -0.1500002962  0.1093577947 0.05977327253 => F
+Point Contact!
+Contact position is: -0.1499900742  0.1095259269 0.05980898638 => F
+Point Contact!
+Contact position is: -0.1490754365  -0.109526372 0.05918862516 => G
+Point Contact!
+Contact position is:   -0.149125701  -0.1088574036 -0.05996922568 => H
+
+Result: G => GH => H => D => DC => C => H => C => CD => D => DA => A => AF => F => G =>H
+
+
+
+input #2: -8 -13 5 1 0 2
+
+DART:
+Point Contact!
+Contact position is:  -0.1477837706  -0.1091552184 -0.05603817412 => H
+Line Contact!
+Contact Pt1 is:  -0.1484237229  -0.1099769246 -0.05687600305 => H
+Contact Pt2 is:  -0.1490780369   0.1100134839 -0.05817276452 => E
+Point Contact!
+Contact position is: -0.1493285028  0.1099522188 -0.0583565647 => E
+Point Contact!
+Contact position is:   0.1496575086   0.1083142627 -0.05284628021 => D
+Line Contact!
+Contact Pt1 is:   0.1487007983     0.10981291 -0.05283306445 =>D
+Contact Pt2 is:   0.1497080303  -0.1100420484 -0.05838929351 =>C
+Point Contact!
+Contact position is:   0.1497225064  -0.1099735355 -0.05840329875 => C
+Line Contact!
+Contact Pt1 is:  0.1499981707 -0.1099758088 -0.0584696698 => C
+Contact Pt2 is:   -0.150001387  -0.1099814829 -0.05882940517 => H
+Face Contact!
+Contact Pt1 is:   0.1499999525  -0.1099938392 -0.05881879994 => C
+Contact Pt2 is:  -0.1500000761  -0.1099939205 -0.05883373519 => H
+Contact Pt3 is: -0.1499999892  0.1100001034  -0.059981092 => E
+
+Results: H => HE => E => D => DC => C => CH => CHED
+
+Ours:
+Point Contact!
+Contact position is:  -0.1477837706  -0.1091552184 -0.05603817412 => H
+Line Contact!
+Contact Pt1 is:  -0.1500000003  -0.1099999881 -0.06000002337 => H
+Contact Pt2 is:   -0.150000042   0.1099999856 -0.06000003405 => E
+Point Contact!
+Contact position is: -0.1500000161  0.1099999874 -0.0600000015 => E
+Point Contact!
+Contact position is:   0.1500000621   0.1100000244 -0.05999998276 => D
+Line Contact!
+Contact Pt1 is:   0.1499999912   0.1100000339 -0.06000001141 => D
+Contact Pt2 is:   0.1500000074    -0.10999996 -0.06000000331 => C
+Point Contact!
+Contact position is:  0.1500000292 -0.1099999995 -0.0600000017 => C
+Line Contact!
+Contact Pt1 is:   0.1499999009   -0.110000042 -0.05999997546 => C
+Contact Pt2 is:  -0.1500000212  -0.1100000362 -0.05999998765 => H
+Face Contact!
+Contact Pt1 is:   0.1500000294  -0.1100000169 -0.05999996972 => C
+Contact Pt2 is:  -0.1499999639  -0.1100000322 -0.05999998419 => H
+Contact Pt3 is:   0.1499999891   0.1099999808 -0.05999997977 => D
+
+Results: H => HE => E => D => DC => C => CH => CHED
+
+
+PDD:
+Point Contact!
+Contact position is:  -0.1477837706  -0.1091552184 -0.05603817412 => H
+Line Contact!
+Contact Pt1 is:  -0.1503144514  -0.1089147712 -0.06267910064 => H
+Contact Pt2 is:  -0.1473058225   0.1097603044 -0.05454924329 => E
+Point Contact!
+Contact position is: -0.1475702578  0.1096482502 -0.0545276577 => E
+Line Contact!
+Contact Pt1 is:  -0.1520420668   0.1091159396 -0.06392717571 => E
+Contact Pt2 is:   0.1496761107   0.1076316778 -0.05206126982 => D
+Point Contact!
+Contact position is:   0.1487372794    0.105079651 -0.04492549749 => D
+Point Contact!
+Contact position is:   0.1497630134  -0.1099749813 -0.05984372458 => C
+Point Contact!
+Contact position is:  0.1484545572 -0.1098487203 0.05997104302 => B
+Line Contact!
+Contact Pt1 is:  0.1488754106 -0.1099981733 0.05967994379 => B
+Contact Pt2 is:  0.1492103302  0.1100012744 0.05977524306 => A
+Point Contact!
+Contact position is:  0.1533678493  0.1109407153 0.06102199509 => A
+Point Contact!
+Contact position is: -0.1495712063  0.1090304663   0.059187406 => F
+Point Contact!
+Contact position is:  0.1492784934 -0.1096134699 0.05860972719 =>B
+Point Contact!
+Contact position is: -0.1497567907 -0.1092696737 0.05382541311 =>G
+Point Contact!
+Contact position is: -0.1497585797  0.1099971757  0.0593354687 =>F
+
+Results: H => HE => E => ED => D => C => B => BA => A => F => B => G =>F
+
+
+
+input #3: -13 1 5 -2.5 0 -0.6
+
+DART:
+Point Contact!
+Contact position is: -0.1485256204   0.107661386 -0.0545261323 => E
+Line Contact!
+Contact Pt1 is:  -0.1499202134   0.1100022426 -0.05972733645 => E
+Contact Pt2 is:  -0.1494296002  -0.1099838695 -0.05805002203 => H
+Point Contact!
+Contact position is:  -0.1494855406  -0.1099485736 -0.05807130442 => H
+Line Contact!
+Contact Pt1 is:  -0.1499957472  -0.1096875898 -0.05839165706 => H
+Contact Pt2 is:  0.1500022233 -0.1098360497 -0.0591557471 => C
+Face Contact!
+Contact Pt1 is:  -0.1499964096  -0.1100014856 -0.05851600796 => H
+Contact Pt2 is:   0.1500018742  -0.1100007373 -0.05923679627 => C
+Contact Pt3 is:   -0.149995892   0.1099982411 -0.05829026796 => E
+
+Results: E => EH => H => HC => HCDE
+
+Ours:
+Point Contact!
+Contact position is: -0.1485256204   0.107661386 -0.0545261323 => E
+Line Contact!
+Contact Pt1 is:  -0.1499999764  -0.1099999603 -0.05999998391 => H
+Contact Pt2 is:  -0.1500000083   0.1100000131 -0.05999998104 => E
+Point Contact!
+Contact position is:  -0.1500000133  -0.1099999824 -0.05999999886 => H
+Face Contact!
+Contact Pt1 is:  -0.1500000184  -0.1099999836 -0.05999998397 => H
+Contact Pt2 is:   0.1500000291  -0.1099999819 -0.05999999662 => C
+Contact Pt3 is:  -0.1500000208   0.1100000398 -0.05999999016 => E
+
+Results: E => EH => H => HCDE
+
+PDD:
+Point Contact!
+Contact position is: -0.1485256204   0.107661386 -0.0545261323 => E
+Point Contact!
+Contact position is: -0.1491891136 -0.1097635168 -0.0567740606 => H
+Point Contact!
+Contact position is:   0.1498370751  -0.1096597771 -0.05831608545 => C
+Line Contact!
+Contact Pt1 is:   0.1493440508  -0.1084617305 -0.06012129142 => C
+Contact Pt2 is:   0.1499677804   0.1099984628 -0.05947572894 => D
+Point Contact!
+Contact position is:   0.1498262801   0.1099183607 -0.05694564395 => D
+Line Contact!
+Contact Pt1 is:  0.1534892142   0.111531733 -0.0607971765	=>D
+Contact Pt2 is:  -0.1499972223   0.1099568559 -0.05944498806 =>E
+Point Contact!
+Contact position is: -0.1499805163  0.1098455379 -0.0582117002 => E
+Line Contact!
+Contact Pt1 is:  -0.1491278596   0.1104330003 -0.06018503699 => E
+Contact Pt2 is: -0.1499742506 -0.1099986709  -0.059526878 => H
+Point Contact!
+Contact position is:   0.1499987332   0.1099793767 -0.05984031799 =>D
+Point Contact!
+Contact position is:  -0.1499993169   0.1099952405 -0.05995694329 =>E
+Point Contact!
+Contact position is:   0.1499932913   0.1099899275 -0.05969470042 =>D
+Line Contact!
+Contact Pt1 is:   0.1507746923   0.1079172755 -0.06379189469 => D
+Contact Pt2 is:   0.1499838563  -0.1099725334 -0.05880220705 => C
+Point Contact!
+Contact position is:    0.149963746  -0.1099236902 -0.05758069455 => C
+Line Contact!
+Contact Pt1 is:   0.1500214562  -0.1101810958 -0.06149354569 => C
+Contact Pt2 is:  -0.1499965205  -0.1099827426 -0.05949147176 => H
+Point Contact!
+Contact position is:  -0.1497316331  -0.1097481 -0.06053262304 => H
+Line Contact!
+Contact Pt1 is:  -0.1493969417  -0.1096806698 -0.06025846605 => H
+Contact Pt2 is:    -0.14997076    0.109997948 -0.05943179284 => E
+Point Contact!
+Contact position is:  -0.1499236679   0.1099519702 -0.05817405225 =>E
+Line Contact!
+Contact Pt1 is:  -0.1473109539   0.1102199427 -0.06209423599 =>E
+Contact Pt2 is:   0.1499828981   0.1098982693 -0.05856984102 =>D
+Point Contact!
+Contact position is:   0.1498481193   0.1095594589 -0.05532189412 =>A
+Point Contact!
+Contact position is:   0.1498641107  -0.1099898936 -0.05900528504 =>C
+Point Contact!
+Contact position is:   -0.149988125   0.1099659738 -0.05891393711 => E
+Face Contact!
+Contact Pt1 is:  -0.1492181808   0.1101084697 -0.06128479004 => E
+Contact Pt2 is:  -0.1499954629  -0.1099732301 -0.05813204997 => H
+Contact Pt3 is:    0.150002724  -0.1099836012 -0.05885297688 => C
+Line Contact!
+Contact Pt1 is:   0.1499877979  -0.1099243127 -0.05734913375 => C
+Contact Pt2 is: -0.1500059129 -0.1099636044 -0.0587235457 => H
+Point Contact!
+Contact position is:   0.1499314789  -0.1098810918 -0.05715479279 => C
+Point Contact!
+Contact position is:   0.1498469884   0.1099958913 -0.05953637464 => D
+Point Contact!
+Contact position is:   0.1499212095  -0.1099949735 -0.05971811139 => C
+Point Contact!
+Contact position is:   0.1499713777   0.1099880096 -0.05955432321 => D
+Point Contact!
+Contact position is:  -0.1499917649   0.1098799876 -0.05901901798 => E
+Point Contact!
+Contact position is:   0.1499592441  -0.1099759448 -0.05802491385 => C
+Point Contact!
+Contact position is:   0.1498834246    0.109956132 -0.05860566279 => D
+
+Results: E => H => C => CD => D => DE => E => EH => D => E => D => DC
+=> C => CH => H => HE => E => ED => A => C => E => EHCD => HC => C
+=> D => C => D => E => C =>D
+
+
+
+
+input #4: 13 10 1 -2 0 0.8
+
+DART:
+Point Contact!
+Contact position is:  0.1496758454  0.1088097696 0.05935199295 => A
+Line Contact!
+Contact Pt1 is:  0.1530684447   0.112543685 0.06025017089 => A
+Contact Pt2 is: -0.149905287 0.1062269529 0.0579184146 => F
+Point Contact!
+Contact position is: -0.1498717315  0.1062309674 0.05792504578 => F
+Line Contact!
+Contact Pt1 is: -0.1499687816  0.1063205505 0.05956302785 => F
+Contact Pt2 is:  0.1500099042  0.1088268945 0.05986070557 => A
+Face Contact!
+Contact Pt1 is: -0.1499799937  0.1069327403 0.05992845058 => F
+Contact Pt2 is:  0.1500073166  0.1088852445 0.05997398941 => A
+Contact Pt3 is: -0.1499982119  0.1097291776 -0.0600063142 => E
+Line Contact!
+Contact Pt1 is:   0.1499989849   0.1093482687 -0.05997400492 => D
+Contact Pt2 is:  -0.1500002528   0.1098162355 -0.05999267899 => E
+Face Contact!
+Contact Pt1 is:   0.1499995522    0.109599101 -0.05999875796 =>D
+Contact Pt2 is:  -0.1499999824   0.1099653937 -0.05999987525 =>E
+Contact Pt3 is:  0.1500000105  0.1099819313 0.06000005483 => A
+Line Contact!
+Contact Pt1 is: 0.1500000639 0.1100026391 0.0600015936 => A
+Contact Pt2 is: -0.1499999408  0.1098614749 0.05999523237 => F
+Face Contact!
+Contact Pt1 is:  0.1500000576  0.1100118577 0.06000660698 => A
+Contact Pt2 is: -0.1500000183  0.1099275607 0.06000015893 => F
+Contact Pt3 is: -0.1499999389  0.1097219169 -0.0599995312 => E
+
+Results: A => AF => F => AF => AFED => DE => AFED => AF => AFDE
+
+Ours:
+Point Contact!
+Contact position is:  0.1496758454  0.1088097696 0.05935199295 => A
+Point Contact!
+Contact position is: -0.1499999678  0.1099999928 0.05999997689 => F
+Line Contact!
+Contact Pt1 is: -0.1500000225  0.1100000118 0.06000003735	=> F
+Contact Pt2 is:  -0.1499999822   0.1099999919 -0.06000000649 => E
+Line Contact!
+Contact Pt1 is:  -0.1500000058   0.1100000218 -0.06000004188 => E
+Contact Pt2 is: -0.1500000214  0.1100000168 0.05999994727 => F
+Point Contact!
+Contact position is:  -0.1500000152   0.1100000131 -0.06000001861 => E
+Face Contact!
+Contact Pt1 is:  -0.1500000397   0.1100000373 -0.05999998508 => E
+Contact Pt2 is:   0.1500000375   0.1100000163 -0.05999998677 => D
+Contact Pt3 is: -0.1499999971  0.1100000043 0.05999997941 	=> F
+Line Contact!
+Contact Pt1 is: -0.1500000175  0.1099999805  0.0600000147 => F
+Contact Pt2 is:  0.1500000292  0.1099999958 0.06000001685 => A
+Face Contact!
+Contact Pt1 is: -0.1499999865  0.1100000242 0.05999990493 => E
+Contact Pt2 is:  0.1499999796  0.1100000225 0.05999994836 => A
+Contact Pt3 is: -0.1500000193   0.110000028  -0.060000041 => F
+Line Contact!
+Contact Pt1 is:  -0.1499999849   0.1099999961 -0.06000001661 => E
+Contact Pt2 is:   0.1499999883   0.1099999676 -0.06000001834 => D
+Face Contact!
+Contact Pt1 is: -0.1499999737  0.1099999966 -0.0599999763	=> E
+Contact Pt2 is:   0.1500000208   0.1100000007 -0.05999999273 => D
+Contact Pt3 is: -0.1499999973  0.1100000112 0.06000001237	=> F
+Line Contact!
+Contact Pt1 is: -0.1499999918  0.1100000198 0.05999992642 => F
+Contact Pt2 is:  0.1499999953  0.1100000332 0.05999994159 => A
+Face Contact!
+Contact Pt1 is: -0.1499999949  0.1100000014 0.06000002537 => F
+Contact Pt2 is:  0.1499999863  0.1100000054 0.05999995697 => A
+Contact Pt3 is:  -0.1500000111     0.10999999 -0.05999998448 => E
+Line Contact!
+Contact Pt1 is:  -0.1500000112   0.1099999761 -0.05999995866 => E
+Contact Pt2 is:   0.1499999707   0.1099999806 -0.05999998596 => D
+Face Contact!
+Contact Pt1 is:  -0.1499999593   0.1099999841 -0.05999996831 => E
+Contact Pt2 is:   0.1500000008     0.10999999 -0.06000003382 => D
+Contact Pt3 is: -0.1500000009  0.1099999744 0.06000004235	=> F
+
+Results: A => F => FE => E => FEDA => FA => FEDA => ED => FEDA => FA => FEDA => ED => FEDA
+
+
+PDD: 
+Point Contact!
+Contact position is:  0.1496758454  0.1088097696 0.05935199295 => A
+Line Contact!
+Contact Pt1 is:   0.15311083 0.1119428508 0.0628277502	=> A
+Contact Pt2 is: -0.1499057257  0.1065218112 0.05799167443 =>F
+Point Contact!
+Contact position is: -0.1495180496  0.1027102285  0.0557456837 => F
+Point Contact!
+Contact position is: -0.1536104166  0.1118803814 0.05922727704 => F
+Point Contact!
+Contact position is: -0.1495878681 -0.1090548781 0.05991547173 => G
+Point Contact!
+Contact position is:  0.1498935677 -0.1068661175 0.05939744349 => B
+Line Contact!
+Contact Pt1 is:  0.1494046964 -0.1054725161 0.05983828221 => B
+Contact Pt2 is:  0.1499579138 -0.1096796292 -0.0600114224 => C
+Point Contact!
+Contact position is:   0.1497588726  -0.1087300033 -0.05992916416 => C
+Point Contact!
+Contact position is:   0.1489035712    0.109987838 -0.05964603594 => D
+Point Contact!
+Contact position is:  0.1493146764 -0.1098267502 0.05981652675 => B
+Point Contact!
+Contact position is:  0.1520018407  0.1107236351 0.06073327346 => A
+Point Contact!
+Contact position is: -0.1499407504  0.1078166501 0.05717990852 => F
+
+Results: A => AF => F => G => B => BC => C => D => B => A => F
+
+
+Input #5: 10 -3 10 -1 0 -0.5
+
+DART:
+Point Contact!
+Contact position is:   0.145920978  0.1093097148 0.05867146855 => A
+Line Contact!
+Contact Pt1 is:  0.1471312573  0.1099789713 0.05889038885 => A
+Contact Pt2 is:  0.1485350883 -0.1100107333 0.05943336679 => B
+Point Contact!
+Contact position is:  0.1485904213 -0.1099613637 0.05942069688 => B
+Line Contact!
+Contact Pt1 is:  0.1504172955 -0.1099756457 0.06007753429 => B
+Contact Pt2 is: -0.1499476737 -0.1070412883 0.05738423267 => G
+Face Contact!
+Contact Pt1 is:  0.1506337664  -0.112162015 0.06182551217 => B
+Contact Pt2 is: -0.1499440203 -0.1099880673 0.05671375523 => G
+Contact Pt3 is: -0.1499576705  0.1100090237 0.05751224425 => F
+Line Contact!
+Contact Pt1 is: -0.1499985797  0.1099607528 0.05845529363 => F
+Contact Pt2 is:  0.1500012029  0.1099675729 0.05872353659 => A
+Face Contact!
+Contact Pt1 is: -0.1499995068  0.1099921437  0.0586572939 =>F
+Contact Pt2 is:  0.1500005316  0.1099928915 0.05878239125 =>A
+Contact Pt3 is: -0.1500000168 -0.1100003554 0.05994369847 =>G
+
+Results: A => AB => B => BG => BGFA => FA => FAGB
+
+Ours: 
+Point Contact!
+Contact position is:   0.145920978  0.1093097148 0.05867146855 => A
+Line Contact!
+Contact Pt1 is:  0.1500000147 -0.1099999531 0.05999998069 => B
+Contact Pt2 is: 0.1500000138 0.1100000202 0.0599999877	=> A
+Point Contact!
+Contact position is:  0.1500000334  -0.109999996 0.06000001002 => B
+Point Contact!
+Contact position is: -0.1500001172 -0.1099999993 0.06000002493 => G
+Line Contact!
+Contact Pt1 is: -0.1499999612  -0.110000014 0.06000000214 => G
+Contact Pt2 is:  0.1500000316 -0.1100000073 0.06000003122 => B
+Face Contact!
+Contact Pt1 is: -0.1500000436 -0.1099999966 0.05999997965 => G
+Contact Pt2 is:  0.1499999886 -0.1099999989 0.05999999134 => B
+Contact Pt3 is: -0.1500000919  0.1100000225  0.0599999874 => F
+
+Results: A => AB => B => G => GB => GBAF
+
+PDD: 
+Point Contact!
+Contact position is:   0.145920978  0.1093097148 0.05867146855 => A
+Line Contact!
+Contact Pt1 is:  0.1460321367  0.1099692903 0.05843316588	=> A
+Contact Pt2 is:  0.1475066885 -0.1100192982 0.05901543147	=> B
+Point Contact!
+Contact position is:  0.1472592582 -0.1099064644 0.05885791467	=> B
+Point Contact!
+Contact position is:  -0.1485749402  -0.1075511231 -0.05927499742	=> H
+Point Contact!
+Contact position is: -0.1496433018 -0.1099720705 0.05999151646	=> G
+Line Contact!
+Contact Pt1 is: -0.1496778231 -0.1100005009 0.05997973643	=> G
+Contact Pt2 is: -0.1493056073  0.1099988459 0.05995630422	=> F
+Point Contact!
+Contact position is: -0.1496516877  0.1099884656 0.05997373745 => F
+Point Contact!
+Contact position is: 0.1485809468 0.1069423104 0.0591884335	=> A
+Line Contact!
+Contact Pt1 is:  0.1470451968  0.1068484647 0.05984628102	=> A
+Contact Pt2 is:    0.149961039   0.1099585796 -0.06000204583 => D
+Point Contact!
+Contact position is:  0.1501768453 -0.1099793485 0.06115161971 =>B
+Point Contact!
+Contact position is: -0.1498765784 -0.1090448505 0.05956830211 =>G
+Line Contact!
+Contact Pt1 is: -0.1499970574 -0.1099353805 0.06000033545	=>G
+Contact Pt2 is:  -0.1499679956  -0.1092906772 -0.05999617158 =>H
+Point Contact!
+Contact position is:  -0.1498287745  -0.1059492787 -0.05968780389 =>H
+Line Contact!
+Contact Pt1 is:  -0.1499624887   -0.106413202 -0.05921097537 => H
+Contact Pt2 is:   0.1500061023  -0.1094141694 -0.05987113371 =>C
+Point Contact!
+Contact position is:  0.1508565303 -0.1107930381  -0.062447218 =>C
+
+Results: A => AB => B => H => G => GF => F => A => AD =>B => G => GH => H
+=> HC => C
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

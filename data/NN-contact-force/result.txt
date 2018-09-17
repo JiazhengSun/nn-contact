@@ -1,0 +1,42 @@
+Trial #1:
+input: 2 2 2 3 0 0
+
+DART: G => GH => H => HC => C => CD => D => DE => DEHC
+Ours: G => GH => H => C => CD => D => DE => DEHC
+PDD:  G => GH => H => D => DC => C => H => C => CD => D => DA => A => AF => F => G =>H
+
+
+
+Translation: 
+A-1, B-2, C-3, D-4, E-5, F-6, G-7, H-8
+AB-a, BC-b, CD-c, DA-d, DE-e, EF-f, FA-g, EH-h, FG-i, GH-j, GB-k, HC-l
+ABCD-A, GHBC-B, EFGH-C, EFAD-D, ABGF-E, EDCH-F
+
+
+After Translation:
+
+Trial #1:	input: 2 2 2 3 0 0
+DART:	7 -> j -> 8 -> l -> 3 -> c -> 4 -> e -> F
+Ours:	7 -> j -> 8 -> 3 -> 4 -> e -> F
+PDD:	7 -> j -> 8 -> 4 -> c -> 3 -> 8 -> 3 -> c -> 4 -> d -> 1 -> g -> 6 -> 7 -> 8
+
+Trial #2:	input: -8 -13 5 1 0 2
+DART:	8 -> h -> 5 -> 4 -> c -> 3 -> l -> F
+Ours:	8 -> h -> 5 -> 4 -> c -> 3 -> l -> F
+PDD:	8 -> h -> 5 -> e -> 4 -> 3 -> 2 -> a -> 1 -> 6 -> 2 -> 7 -> 6
+
+Trial #3:	input: -13 1 5 -2.5 0 -0.6
+DART:	5 -> h -> 8 -> l -> F
+Ours:	5 -> h -> 8 -> F
+PDD:	5 -> h -> 3 -> c -> 4 -> e -> 5 -> h -> 4 -> 5 -> 4 -> c -> 3 -> l -> 8 -> h -> 5 -> e -> 1 -> 3 -> 5 -> F -> l -> 3 -> 4 -> 3 -> 4 -> 5 -> 3 -> 4
+
+Trial #4: 	input: 13 10 1 -2 0 0.8
+DART:	1 -> g -> 6 -> g -> D -> e -> D -> g -> D
+Ours:	1 -> 6 -> f -> 5 -> D -> g -> D -> e -> D -> g -> D -> e -> D
+PDD:	1 -> g -> 6 -> 7 -> 2 -> b -> 3 -> 4 -> 2 -> 1 -> 6
+
+Trial #5:	input: 10 -3 10 -1 0 -0.5
+DART:	1 -> a -> 2 -> k -> E -> g -> E
+Ours:	1 -> a -> 2 -> 7 -> k -> E
+PDD:	1 -> a -> 2 -> 8 -> 7 -> i -> 6 -> 1 -> d -> 2 -> 7 -> j -> 8 -> l -> 3
+
